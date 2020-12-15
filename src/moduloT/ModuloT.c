@@ -1,4 +1,4 @@
-#include "moduloT.h"
+#include "ModuloT.h"
 
 int moduloT (char *filename) {
     LISTA l = listaVazia();

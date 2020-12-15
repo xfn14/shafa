@@ -21,6 +21,6 @@ Repositório dedicado ao Trabalho Prático de Comunicação de Dados do Grupo 14
 - [Eduardo Magalhães](https://github.com/edumagalhaes10)
 - [Pedro Sousa](https://github.com/PWACN)
 - [Alexandre Soares](https://github.com/AlexandreDanielSoares)
-- António Fernandes
+- [António Fernandes](https://github.com/AntonioLuisDeMacedoFernandes)
 - Daniela Carvalho
-- Rui Alves
+- [Rui Alves](https://github.com/ruipedrolousada)

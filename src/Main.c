@@ -1,7 +1,7 @@
 #include "moduloT/ModuloT.h"
 
 int main(){
-    // TODO Prompt Module Selector
-    moduloT("../resources/aaa.txt.freq");
+    moduloT("../resources/aaa.txt.fsreq");
+    int c = moduloC();
     return(0);
 }
