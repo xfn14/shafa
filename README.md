@@ -10,10 +10,17 @@
 <hr>
 <br>
 
-# Info 📍
+## Info 📍
 
 Repositório dedicado ao Trabalho Prático de Comunicação de Dados do Grupo 14.
 
-# Membro(s)
+## Membro(s)
 
 - [André Vaz](https://andreubita.com)
+- [Diogo Vieira](https://github.com/DiogoVieira63)
+- [Eduardo Magalhães](https://github.com/edumagalhaes10)
+- [Pedro Sousa](https://github.com/PWACN)
+- [Alexandre Soares](https://github.com/AlexandreDanielSoares)
+- António Fernandes
+- Daniela Carvalho
+- Rui Alves
