@@ -74,6 +74,7 @@ int getNumLL (char *lista,int fst,int lst){
 void getArPares (endPar arPares[],LISTA l){
     //int last = getNumLL();
     //setPar (arPares[0],0,0);
+    //;
     for (int i = 1; i < CHARS; i++){
 
     }
