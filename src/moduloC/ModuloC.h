@@ -1,0 +1,1 @@
+void moduloC(char *filename);
