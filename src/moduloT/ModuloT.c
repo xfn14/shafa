@@ -64,17 +64,17 @@ void writeOnFile (LISTA l,FILE *file){
 
 int getNumLL (char *lista,int fst,int lst){
     int result = 0;
-    for (int i = 0;lst >= fst; i++ , lst--){ 
-    result += (lista[lst] - 48) * (pow (10.0,i));
+    for (int i = fst;fst < lst; i++ ){ 
+    result = result * 10 + ((int) (lista[fst]));
     } 
     return result;
+
 }
 
-//WIP
-void getArPares (endPar arPares[],LISTA l){
-    //int last = getNumLL();
-    //setPar (arPares[0],0,0);
-    //;
+// WIP
+void getArPares (endPar arPares[], LISTA l){
+    // int last = entreVP () <- Criar;
+    //Criar NO PAR.c -> setPar ();
     for (int i = 1; i < CHARS; i++){
 
     }
@@ -84,45 +84,33 @@ void getArPares (endPar arPares[],LISTA l){
     for (;)
 }*/
 
-/*
-void decresArray (int arrPares[],int N)
+// Para testar
+void decresArray (endPar arPares[])
 {
-    int maior = 0;
-    int ind = 0;
-    for (int i=0;i<N;i++)
-    {
-        int maior = v[i] -> snd;
-        for(int j=i+1,j<N,j++)
-        {
-            if ((v[j]->snd)>maior)
-            maior = v[j]->snd;
+    int maior = 0,ind = 0;
+    for (int i=0; i<CHARS; i++){
+        maior = arPares[i] -> snd;
+        for(int j=i+1; j<CHARS; j++){
+            if ((arPares[j] -> snd) > maior){
+            maior = arPares[j]->snd;
             ind = j;
+            }
         }
-        if (maior != (v[i]->snd))
-        {
-        v[ind] -> snd = v[i] -> snd;
-        v[i] -> snd = maior;
-        }
+        if (maior != (arPares[i] -> snd)) switchPares(arPares, ind, i);
     }
 }
 
-int somaArray (int arrPares[],int i,int j)
-{
+int somaArray (endPar arrPares[],int i,int j) {
     int soma = 0;
-    for(;j>=i;i++) soma += (v[i] -> snd);
+    for(; i < j; i++) soma += (arrPares[i] -> snd);
     return soma;
 }
 
-int melhorDiv (int arrPares[],int i,int j)
-{
-    int mtotal = (somaArray (arrPares,i,j)/2;
-    int soma;
-    for (int ind=i;ind<=j;ind++){
-        soma=(somaArray (arrPares,i,ind);
-      if(soma>mtotal)
-      break;
-    }
-    if (((j-i)>1)&&(soma-mtotal)>(abs(somaArray (arrPares,ind,j)-mtotal)))ind=ind-1;
+int melhorDiv (endPar arrPares[],int i,int j){
+    int mtotal = (somaArray (arrPares,i,j)/2);
+    int soma,ind;
+    for (ind=i; ind <= j && soma <= mtotal; ind++) soma = (somaArray (arrPares,i,ind));
+    if (((j-i) > 1) && (soma - mtotal) > (abs(somaArray (arrPares,ind,j)-mtotal)))ind=ind-1;
     return ind;
 }
-*/
+

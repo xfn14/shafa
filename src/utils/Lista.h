@@ -10,11 +10,6 @@ typedef struct LL {
     char *lista;
 } *LISTA;
 
-typedef struct Par{
-    int fst;
-    int snd;
-} Pares, *endPar;
-
 /**
  * Creates an empty List
  * @param[out] list
