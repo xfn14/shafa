@@ -73,8 +73,9 @@ int getNumLL (char *lista,int fst,int lst){
 
 // WIP
 void getArPares (endPar arPares[], LISTA l){
-    // int last = entreVP () <- Criar;
-    //Criar NO PAR.c -> setPar ();
+    int* ind;
+    int last = entrePV(l -> lista,0);
+    setPar (arPares[0], 0, last);
     for (int i = 1; i < CHARS; i++){
 
     }
@@ -110,7 +111,12 @@ int melhorDiv (endPar arrPares[],int i,int j){
     int mtotal = (somaArray (arrPares,i,j)/2);
     int soma,ind;
     for (ind=i; ind <= j && soma <= mtotal; ind++) soma = (somaArray (arrPares,i,ind));
-    if (((j-i) > 1) && (soma - mtotal) > (abs(somaArray (arrPares,ind,j)-mtotal)))ind=ind-1;
+    if (((j-i) > 1) && (soma - mtotal) > (abs(somaArray (arrPares, ind, j) - mtotal))) ind = ind - 1;
     return ind;
 }
 
+void addBit (endPar SF [],int i,int j,int b){
+    for (; i <= j; i++){
+        (SF [i] -> snd) = (SF [i] -> snd) * 10 + b;
+    }
+}
