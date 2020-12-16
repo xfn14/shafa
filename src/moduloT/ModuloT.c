@@ -2,7 +2,7 @@
 
 int moduloT (char *filename) {
     LISTA l = listaVazia();
-    Pares arPares[CHARS];
+    endPar arPares[CHARS];
     int numBlocos;
     // Abrir o file de input
     FILE *input = fopen (filename,"r");
@@ -23,15 +23,13 @@ int moduloT (char *filename) {
         //Passar o bloco pra array onde arPares[n] = end -> (Sim,Freq) pra depois ordenar
         // g[] = [121323124,32141412] = 121323124 -> (1,2) = 32141412 -> (2,3)
         input = tilAt(input,l);
-
-
+        getArPares (arPares,l);
         //Ordenar po ordem dercresente
         //Shanon fanon
 
         //reordenar o array array[n] = codigo shanon fanon desse numero
         //escrever no file
     }
-    return 0;
 }
 
 FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l){
@@ -71,3 +69,59 @@ int getNumLL (char *lista,int fst,int lst){
     } 
     return result;
 }
+
+//WIP
+void getArPares (endPar arPares[],LISTA l){
+    //int last = getNumLL();
+    //setPar (arPares[0],0,0);
+    for (int i = 1; i < CHARS; i++){
+
+    }
+}
+
+/*int nextValue (char *lista,int i){
+    for (;)
+}*/
+
+/*
+void decresArray (int arrPares[],int N)
+{
+    int maior = 0;
+    int ind = 0;
+    for (int i=0;i<N;i++)
+    {
+        int maior = v[i] -> snd;
+        for(int j=i+1,j<N,j++)
+        {
+            if ((v[j]->snd)>maior)
+            maior = v[j]->snd;
+            ind = j;
+        }
+        if (maior != (v[i]->snd))
+        {
+        v[ind] -> snd = v[i] -> snd;
+        v[i] -> snd = maior;
+        }
+    }
+}
+
+int somaArray (int arrPares[],int i,int j)
+{
+    int soma = 0;
+    for(;j>=i;i++) soma += (v[i] -> snd);
+    return soma;
+}
+
+int melhorDiv (int arrPares[],int i,int j)
+{
+    int mtotal = (somaArray (arrPares,i,j)/2;
+    int soma;
+    for (int ind=i;ind<=j;ind++){
+        soma=(somaArray (arrPares,i,ind);
+      if(soma>mtotal)
+      break;
+    }
+    if (((j-i)>1)&&(soma-mtotal)>(abs(somaArray (arrPares,ind,j)-mtotal)))ind=ind-1;
+    return ind;
+}
+*/

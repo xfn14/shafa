@@ -2,6 +2,7 @@
 @file Lista.h
 List Utility
 */
+#include <stdlib.h>
 
 typedef struct LL {
     int size;
