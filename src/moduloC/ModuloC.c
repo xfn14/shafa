@@ -1,5 +1,5 @@
 #include "ModuloC.h"
 
-void moduloC(char filename){
-
+void moduloC(char *filename){
+    printf(filename);
 }

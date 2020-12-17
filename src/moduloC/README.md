@@ -1,8 +1,8 @@
-# Módulo T
+# Módulo C
 
 <!-- Insert information here -->
 
 ## Autores
 
 - [André Vaz](https://andreubita.com)
-- [Alexandre Soares](https://github.com/AlexandreDanielSoares)
+- [Rui Alves](https://github.com/ruipedrolousada)

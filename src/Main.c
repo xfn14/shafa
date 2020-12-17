@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "moduloT/ModuloT.h"
+//#include "moduloT/ModuloT.h"
 #include "moduloC/ModuloC.h"
 
 int main(int argc, char *argv[]){
