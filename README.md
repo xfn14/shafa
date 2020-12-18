@@ -2,7 +2,7 @@
     <img src="https://i.imgur.com/GOGaHkq.jpg" align="center" alt="MiEI">
     <br>
     <br>
-    <strong><i>Comunicação de Dados 2020/2021</i></strong>
+    <strong><i>Comunicação de Dados 2020/2021 (Shafa)</i></strong>
     <br>
     <br>
 </div>
@@ -14,7 +14,16 @@
 
 Repositório dedicado ao Trabalho Prático de Comunicação de Dados do Grupo 14.
 
-## Membro(s)
+## Como usar?
+
+Executar os seguintes comandos na root do projeto
+
+```bash
+make
+./shafa
+```
+
+## Autores
 
 - [André Vaz](https://andreubita.com)
 - [Diogo Vieira](https://github.com/DiogoVieira63)

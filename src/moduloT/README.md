@@ -5,4 +5,4 @@
 ## Autores
 
 - [Pedro Sousa](https://github.com/PWACN)
-- [Alexandre Soares](https://github.com/AlexandreDanielSoares)
+- [Alexandre Soares](https://github.com/ruipedrolousada)
