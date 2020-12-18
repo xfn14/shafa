@@ -5,7 +5,6 @@ Main do ModuloT
 
 #include <stdio.h>
 #include <stdlib.h>
-moduloT
 #include "../utils/utils.h"
 
 #define CHARS 256
