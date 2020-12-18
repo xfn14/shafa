@@ -2,17 +2,13 @@
 @file Lista.h
 List Utility
 */
+#include <stdlib.h>
 
 typedef struct LL {
     int size;
     int last;
     char *lista;
 } *LISTA;
-
-typedef struct Par{
-    int fst;
-    int snd;
-} Pares, *endPar;
 
 /**
  * Creates an empty List

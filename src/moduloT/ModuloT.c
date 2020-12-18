@@ -2,7 +2,7 @@
 
 int moduloT (char *filename) {
     LISTA l = listaVazia();
-    Pares arPares[CHARS];
+    endPar arPares[CHARS];
     int numBlocos;
     // Abrir o file de input
     FILE *input = fopen (filename,"r");
@@ -23,15 +23,13 @@ int moduloT (char *filename) {
         //Passar o bloco pra array onde arPares[n] = end -> (Sim,Freq) pra depois ordenar
         // g[] = [121323124,32141412] = 121323124 -> (1,2) = 32141412 -> (2,3)
         input = tilAt(input,l);
-
-
+        getArPares (arPares,l);
         //Ordenar po ordem dercresente
         //Shanon fanon
 
         //reordenar o array array[n] = codigo shanon fanon desse numero
         //escrever no file
     }
-    return 0;
 }
 
 FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l){
@@ -66,8 +64,59 @@ void writeOnFile (LISTA l,FILE *file){
 
 int getNumLL (char *lista,int fst,int lst){
     int result = 0;
-    for (int i = 0;lst >= fst; i++ , lst--){ 
-    result += (lista[lst] - 48) * (pow (10.0,i));
+    for (int i = fst;fst < lst; i++ ){ 
+    result = result * 10 + ((int) (lista[fst]));
     } 
     return result;
+
+}
+
+// WIP
+void getArPares (endPar arPares[], LISTA l){
+    int* ind;
+    int last = entrePV(l -> lista,0);
+    setPar (arPares[0], 0, last);
+    for (int i = 1; i < CHARS; i++){
+
+    }
+}
+
+/*int nextValue (char *lista,int i){
+    for (;)
+}*/
+
+// Para testar
+void decresArray (endPar arPares[])
+{
+    int maior = 0,ind = 0;
+    for (int i=0; i<CHARS; i++){
+        maior = arPares[i] -> snd;
+        for(int j=i+1; j<CHARS; j++){
+            if ((arPares[j] -> snd) > maior){
+            maior = arPares[j]->snd;
+            ind = j;
+            }
+        }
+        if (maior != (arPares[i] -> snd)) switchPares(arPares, ind, i);
+    }
+}
+
+int somaArray (endPar arrPares[],int i,int j) {
+    int soma = 0;
+    for(; i < j; i++) soma += (arrPares[i] -> snd);
+    return soma;
+}
+
+int melhorDiv (endPar arrPares[],int i,int j){
+    int mtotal = (somaArray (arrPares,i,j)/2);
+    int soma,ind;
+    for (ind=i; ind <= j && soma <= mtotal; ind++) soma = (somaArray (arrPares,i,ind));
+    if (((j-i) > 1) && (soma - mtotal) > (abs(somaArray (arrPares, ind, j) - mtotal))) ind = ind - 1;
+    return ind;
+}
+
+void addBit (endPar SF [],int i,int j,int b){
+    for (; i <= j; i++){
+        (SF [i] -> snd) = (SF [i] -> snd) * 10 + b;
+    }
 }
