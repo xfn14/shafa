@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "../utils/Lista.h"
 
 /**
  * @brief Codificação de um ficheiro de símbolos
@@ -21,8 +22,6 @@ void moduloC(char *filename);
  * @param[out] coded_sequence
  */
 char* binary_coding(char symbols[], int n_symbols, char codes[], char index[], char next[]);
-
-bool or_bin(char byte_a, char byte_b);
 
 /**
  * @brief Print no terminal a informação final de execução
