@@ -1,6 +1,7 @@
 #include "ModuloC.h"
 
-#define MAX_FILENAME 100
+#define FILENAME_MAX 100
+#define CODE_MAX_SIZE 8
 
 /**
  * @[número_de_blocos]
@@ -10,6 +11,8 @@
  * @[tamanho_último_bloco]
  * @(sequência_de_bits_resultante_da_codificação_SF_do_último_bloco)
  */
+
+ // CODE_MAX_SIZE = length_code_max/8 em excesoo + 1
 
 void moduloC(char *main_file){
     clock_t start_time = clock();
@@ -22,6 +25,32 @@ void moduloC(char *main_file){
     out = fopen(shaf_file, "wb+");
 
     print_final_info(start_time, shaf_file);
+}
+
+char* binary_coding(char symbols[], int n_symbols, char codes[], char index[], char next[]){
+    char *coded_sequence;
+    int offset = 0, ind_in = 0, ind_out = 0;
+    while(ind_in < n_symbols){
+        char symbol = symbols[ind_in] + offset;
+        int n_bytes_in_code = index[symbol];
+        char code = codes[symbol];
+        int ind_code = 0;
+        while (ind_code <= n_bytes_in_code){
+            coded_sequence[ind_out] = or_bin(coded_sequence[ind_out], code[ind_code]);
+            if(ind_code < n_bytes_in_code){
+                ind_out = ind_out + 1;
+                ind_code = ind_code + 1;
+            }
+        }
+        offset = next[symbol];
+        ind_in = ind_in + 1;
+    }
+    return coded_sequence;
+}
+
+// TODO
+bool or_bin(char byte_a, char byte_b){
+
 }
 
 void print_final_info(clock_t start_time, char *shaf_file){

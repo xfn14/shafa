@@ -31,5 +31,5 @@ make
 - [Pedro Sousa](https://github.com/PWACN)
 - [Alexandre Soares](https://github.com/AlexandreDanielSoares)
 - [António Fernandes](https://github.com/AntonioLuisDeMacedoFernandes)
-- Daniela Carvalho
+- [Daniela Carvalho](https://github.com/daniela2020um)
 - [Rui Alves](https://github.com/ruipedrolousada)
