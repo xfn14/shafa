@@ -1,3 +1,12 @@
+/**
+ * @file Shafa
+ * @brief Shafa tool for data compression
+ * @version 0.1
+ * @date 2020-12-19
+ * 
+ * @copyright Copyright (c) 2020
+ */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
