@@ -9,6 +9,7 @@
  
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 //#include "moduloT/ModuloT.h"
 #include "moduloC/ModuloC.h"
@@ -26,12 +27,12 @@ int main(int argc, char *argv[]){
                     break;
                 default:
                     printf("Modulo inválido. Disponíveis: t,c");
-                    return 0;
+                    return EXIT_FAILURE;
             }
         }
     }else{
         printf("Error in syntax: shafa <file> -m <modulo>\n");
-        return 0;
+        return EXIT_FAILURE;
     }
-    return 1;
+    return EXIT_SUCCESS;
 }
