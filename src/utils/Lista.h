@@ -2,17 +2,24 @@
 @file Lista.h
 List Utility
 */
+#include <stdlib.h>
+
+/**
+ * @brief Store Shannon-Fano Codes
+ */
+typedef struct node{
+    char sym;
+
+    float prob;
+    int code[20];
+    int top;
+} codes[256]; // N=256 (8 bits)
 
 typedef struct LL {
     int size;
     int last;
     char *lista;
 } *LISTA;
-
-typedef struct Par{
-    int fst;
-    int snd;
-} Pares, *endPar;
 
 /**
  * Creates an empty List
