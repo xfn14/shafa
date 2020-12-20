@@ -21,18 +21,9 @@ void moduloC(char *main_file){
     strcat(shaf_file, main_file); strcat(shaf_file, ".shaf");
     strcat(cod_file, main_file); strcat(cod_file, ".cod");
     FILE *in, *out;
-<<<<<<< HEAD
-    in = fopen(main_file, "rb");
-    out = fopen(shaf_file, "wb+");
-
-    int nr_blocks
-    int block_size[nr_blocks];
-
-=======
     in = fopen(cod_file, "rb");
     out = fopen(shaf_file, "wb+");
 
->>>>>>> 89f15cf2ef85e35320b82f3879321e90374400a8
     print_final_info(start_time, shaf_file);
 }
 
