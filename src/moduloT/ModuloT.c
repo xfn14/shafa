@@ -76,13 +76,14 @@ void getArPares (endPar arPares[], LISTA l){
     int* num;
     int ind = entrePV(l -> lista,0, num);
     int last = *num; 
-    setPar (arPares[0], 0, 0, *num);
+    setPar (arPares[0], 0, *num);
     for (int i = 1; i < CHARS; i++){
         ind = entrePV(l -> lista, ind, num);
         if (*num == -1){
-
+            setPar(arPares[i],i,last);
         }else {
-            
+            setPar(arPares[i],i,*num);
+            last = *num;
         }
     }
 }
@@ -96,10 +97,6 @@ int entrePV (char *lista, int start, int *num){
     }else *num = result;
     return start;
 }
-
-/*int nextValue (char *lista,int i){
-    for (;)
-}*/
 
 // Para testar
 void decresArray (endPar arPares[])
