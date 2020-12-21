@@ -133,3 +133,16 @@ void addBit (endPar SF [],int i,int j,int b){
         (SF [i] -> snd) = (SF [i] -> snd) * 10 + b;
     }
 }
+
+void calcularSF (endPar arrPares[],endPar SF[],int i, int j)
+{
+    int div;
+    if (i!=j)
+    {
+         div = melhorDiv (arrPares,i,j);
+         addBit (SF,i,div,0);
+         addBit (SF,div+1,j,1);
+         calcularSF (arrPares,SF,i,div);
+         calcularSF (arrPares,SF,div+1,j);
+    }
+} 
