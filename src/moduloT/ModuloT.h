@@ -17,3 +17,4 @@ void writeOnFile (LISTA l,FILE *file);
 int getNumLL (char *lista,int fst,int lst);
 FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l);
 void getArPares (endPar arPares[],LISTA l);
+int entrePV (char *lista, int start, int *num);

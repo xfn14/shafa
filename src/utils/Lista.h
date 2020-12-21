@@ -46,14 +46,14 @@ LISTA listaVazia(){
 void addToLista(LISTA l, char elem){
     if(l->last == l->size){
         l->size = 2*(l->size)+1;
-        l->lista = realloc(l->lista,l->size);
+        l->lista = realloc(l->lista,l->size * sizeof(char));
     }
     l->lista[l->last++] = elem;
 }
 
 void setSize(LISTA l, int size){
     if(size > l->size){
-        realloc(l->lista, size);
+        realloc(l->lista, size * sizeof(char));
         l->size = size;
     }
 }

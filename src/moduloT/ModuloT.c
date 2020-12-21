@@ -20,7 +20,7 @@ int moduloT (char *filename) {
     for(int i = 0; i < 1; i++){
         //Tamanho do bloco
         input = writeNum(input,output,NULL,l);
-        //Passar o bloco pra array onde arPares[n] = end -> (Sim,Freq) pra depois ordenar
+        //Passar o bloco pra array onde arPares[n] = end -> (Nº de Simb ,Freq) pra depois ordenar
         // g[] = [121323124,32141412] = 121323124 -> (1,2) = 32141412 -> (2,3)
         input = tilAt(input,l);
         getArPares (arPares,l);
@@ -30,13 +30,6 @@ int moduloT (char *filename) {
         //reordenar o array array[n] = codigo shanon fanon desse numero
         //escrever no file
     }
-}
-
-FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l){
-    input = tilAt(input,l);
-    if(ret != NULL) *ret = getNumLL (l->lista, 0, (l->last)-1);
-    writeOnFile (l,output);
-    return input;
 }
 
 FILE *tilAt (FILE *file,LISTA l){
@@ -71,14 +64,37 @@ int getNumLL (char *lista,int fst,int lst){
 
 }
 
+FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l){
+    input = tilAt(input,l);
+    if(ret != NULL) *ret = getNumLL (l->lista, 0, (l->last)-1);
+    writeOnFile (l,output);
+    return input;
+}
+
 // WIP
 void getArPares (endPar arPares[], LISTA l){
-    int* ind;
-    int last = entrePV(l -> lista,0);
-    setPar (arPares[0], 0, last);
+    int* num;
+    int ind = entrePV(l -> lista,0, num);
+    int last = *num; 
+    setPar (arPares[0], 0, 0, *num);
     for (int i = 1; i < CHARS; i++){
+        ind = entrePV(l -> lista, ind, num);
+        if (*num == -1){
 
+        }else {
+            
+        }
     }
+}
+
+int entrePV (char *lista, int start, int *num){
+    int i, result = 0;
+    for (i = start; lista[i] != ';'; i ++) result = result * 10 * (lista[i] - 48);
+    if (i == start){
+        *num = -1;
+        start ++;
+    }else *num = result;
+    return start;
 }
 
 /*int nextValue (char *lista,int i){
