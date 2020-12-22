@@ -30,6 +30,6 @@ make
 - [Eduardo Magalhães](https://github.com/edumagalhaes10)
 - [Pedro Sousa](https://github.com/PWACN)
 - [Alexandre Soares](https://github.com/AlexandreDanielSoares)
-- [António Fernandes](https://github.com/AntonioLuisDeMacedoFernandes)
+- [António Fernandes](https://github.com/antoniolmf)
 - [Daniela Carvalho](https://github.com/daniela2020um)
 - [Rui Alves](https://github.com/ruipedrolousada)
