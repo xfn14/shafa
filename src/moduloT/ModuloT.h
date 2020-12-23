@@ -5,7 +5,8 @@ Main do ModuloT
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../utils/utils.h"
+#include <string.h>
+#include "utils.h"
 
 #define CHARS 256
 
@@ -17,11 +18,12 @@ void writeOnFile (LISTA l,FILE *file);
 int getNumLL (char *lista,int fst,int lst);
 FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l);
 void getArPares (endPar arPares[],LISTA l);
-int entrePV (char *lista, int start, int *num);
-void decresArray (endPar arPares[]);
+int entrePV (LISTA l, int start, int *num);
+int decresArray (endPar arPares[]);
 int somaArray (endPar arrPares[],int i,int j);
 int melhorDiv (endPar arrPares[],int i,int j);
 void addBit (endPar SF [],int i,int j,int b);
 void calcularSF (endPar arrPares[],endPar SF[],int i, int j);
+FILE *printArParFile (endPar SF[],FILE *output);
 void numToString (int num,char *string);
 int sizeNum (int num);
