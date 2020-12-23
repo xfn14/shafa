@@ -18,6 +18,7 @@ typedef struct Par{
  */
 void switchPares (endPar arPares[], int fsr, int lst);
 void setPar (endPar arPares, int simb, int freq);
+void cpPar_Snd (endPar source[],endPar dest[],int size,int def);
 
 void switchPares (endPar arPares[], int fst, int lst){
     endPar temp = arPares[fst];
@@ -28,4 +29,10 @@ void switchPares (endPar arPares[], int fst, int lst){
 void setPar (endPar arPares, int simb, int freq){
     arPares -> fst = simb;
     arPares -> snd = freq;
+}
+
+void  cpPar_Snd (endPar source[], endPar dest[], int size, int def){
+    for (int i = 0; i < size; i++){
+        setPar(dest, source [i] -> fst, def);
+    }
 }

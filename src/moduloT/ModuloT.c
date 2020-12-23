@@ -3,6 +3,7 @@
 int moduloT (char *filename) {
     LISTA l = listaVazia();
     endPar arPares[CHARS];
+    endPar SF[CHARS];
     int numBlocos;
     // Abrir o file de input
     FILE *input = fopen (filename,"r");
@@ -25,11 +26,15 @@ int moduloT (char *filename) {
         input = tilAt(input,l);
         getArPares (arPares,l);
         //Ordenar po ordem dercresente
+        decresArray (arPares);
+        cpPar_Snd (arPares,SF,CHARS,1);
         //Shanon fanon
-
+        calcularSF (arPares, SF, 0, CHARS);
         //reordenar o array array[n] = codigo shanon fanon desse numero
         //escrever no file
+        printArParFile (SF, output);
     }
+    return 0;
 }
 
 FILE *tilAt (FILE *file,LISTA l){
@@ -134,15 +139,45 @@ void addBit (endPar SF [],int i,int j,int b){
     }
 }
 
-void calcularSF (endPar arrPares[],endPar SF[],int i, int j)
-{
+void calcularSF (endPar arrPares[],endPar SF[],int i, int j){
     int div;
-    if (i!=j)
-    {
-         div = melhorDiv (arrPares,i,j);
-         addBit (SF,i,div,0);
-         addBit (SF,div+1,j,1);
-         calcularSF (arrPares,SF,i,div);
-         calcularSF (arrPares,SF,div+1,j);
+    if (i!=j) {
+        div = melhorDiv (arrPares,i,j);
+        addBit (SF,i,div,0);
+        addBit (SF,div+1,j,1);
+        calcularSF (arrPares,SF,i,div);
+        calcularSF (arrPares,SF,div+1,j);
     }
 } 
+
+void printArParFile (endPar SF[],FILE *output){
+    int last = CHARS - 1;
+    int simb = 0;
+    char num[100];
+    for (int i = 0;i <= last; i++){
+        if (SF[i] -> fst == simb){
+            if (SF[i] -> snd != 1){
+                numToString (SF[i] -> snd, num);
+                fprintf(output,"%s",num);
+            }
+            putc (';', output);
+            i = 0;
+        }  
+    }
+}
+
+void numToString (int num,char *string){
+    int size = sizeNum (num);
+    string[size - 1] = '\0';
+    for (int i = size - 2; num < 10; i --){
+        string[i] = num % 10;
+        num = num / 10;
+    }
+}
+
+int sizeNUm (int num){
+    int i;
+    for (i = 0; num < 10 ; i++)num = num / 10;    
+    i++;
+    return i;
+}
