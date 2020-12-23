@@ -8,7 +8,7 @@
 Abin init_tree()
 {
     Abin tree = malloc(sizeof(struct nodo));
-    tree->data = 0;
+    tree->data = -1;
     tree->esq = NULL;
     tree->dir = NULL;
     return tree;
@@ -47,7 +47,7 @@ void insert_Tree(Abin *tree, D_Array *code, unsigned char letter)
     {
         if ((*tree)->dir == NULL)
         {
-            add_new(*tree, 1,EMPTY);
+            add_new(*tree, 1, EMPTY);
         }
         remove_first(code);
         insert_Tree(&((*tree)->dir), code, letter);
@@ -57,7 +57,7 @@ void insert_Tree(Abin *tree, D_Array *code, unsigned char letter)
 
 //void look_up(Abin t, D_Array *code, ..)
 
-    void imprimeAUx(Abin t, char s[])
+void imprimeAUx(Abin t, char s[])
 {
     if (t)
     {
@@ -80,11 +80,13 @@ void imprime(Abin t)
     imprimeAUx(t, s);
 }
 
-void freeAB (Abin t){
-    if (t){
-    freeAB (t->esq);
-    freeAB (t->dir);
-    free (t);
+void freeAB(Abin t)
+{
+    if (t)
+    {
+        freeAB(t->esq);
+        freeAB(t->dir);
+        free(t);
     }
 }
 /*

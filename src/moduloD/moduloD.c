@@ -73,43 +73,50 @@ int cod_file (char *filename, int size){
 //KINDA DONE
 void do_tree(char *filename, Abin *tree)
 {
-    int file_size = 711; 
+    int file_size = 545;
     FILE *fp;
-    fp = fopen(filename,"rb");
-    unsigned char *buffer = malloc (sizeof (unsigned char) * file_size);
-    if (fread(buffer,sizeof(unsigned char),file_size,fp) == 0)
+    fp = fopen(filename, "rb");
+    unsigned char *buffer = malloc(sizeof(unsigned char) * file_size);
+    if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0)
         return; //read a block or file (TBD)
-    int count,u = 0;
-    for (u = 0;;u++){
-        if (count == 4)break;
-        if (buffer [u] == '@')count++;
+    int count = 0, u = 0;
+    for (u = 0;; u++)
+    {
+        if (count == 4)
+            break;
+        if (buffer[u] == '@')
+            count++;
     }
     unsigned char element = 0;
     D_Array arr;
-    initArray (&arr,5);
-    for (int i = u; i < file_size; i++)//doing only one block atm
-    {    
-        if (buffer[i]== '@'){
+    initArray(&arr, 5);
+    for (int i = u; i < file_size; i++)
+    {
+        if (buffer[i] == '@')
+        {
             imprime(*tree);
             putchar('\n');
             freeAB(*tree);
-            *tree= init_tree();
+            *tree = init_tree();
             element = 0;
             count = 0;
-            for (u = i;;u++){
-                if (count == 2)break;
-                if (buffer [u] == '@')count++;
+            for (u = i;; u++)
+            {
+                if (count == 2)
+                    break;
+                if (buffer[u] == '@')
+                    count++;
             }
             i = u;
         }
-        if (buffer[i] == ';'){
-            if (arr.used != 0){
-                insert_Tree(tree,&arr,element); //insert every code in tree
-            }
+        if (buffer[i] == ';')
+        {
+            if (arr.used != 0)
+                insert_Tree(tree, &arr, element); //insert every code in tree
             element++;
         }
         else
-            insertArray(&arr,buffer[i]);
+            insertArray(&arr, buffer[i]);
     }
 }
 
@@ -148,12 +155,11 @@ void shaf_decompression(int code_max_size, int *block_size, int nr_blocks, int *
 }
 */
 
-
 int main(int argc, char **argv)
 {
     Abin tree;
     tree = init_tree();
-    do_tree("aaa.txt.rle.cod",&tree);
+    do_tree("aaa.txt.cod", &tree);
     /*
     //int block_size = , nr_blocks =;  // needed for rle decompression, user has to give the freq file to get the block numbers (TBD)
     //if (argc == 5){
