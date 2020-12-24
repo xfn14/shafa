@@ -26,3 +26,8 @@ void setSize(LISTA l, int size){
 void resetLista (LISTA l){
     l->last = 0;
 }
+
+void freeLista (LISTA l){
+    free (l -> lista);
+    free (l);
+}

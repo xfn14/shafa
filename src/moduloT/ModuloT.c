@@ -35,7 +35,10 @@ int moduloT (char *filename) {
         output = printArParFile (SF, output);
         resetLista (l);
     }
-    fprintf(output,"@0");
+    fprintf (output,"@0");
+    freeLista (l);
+    freeArPares (arPares,CHARS);
+    freeArPares (SF,CHARS);
     return 0;
 }
 
@@ -105,8 +108,7 @@ int entrePV (LISTA l, int start, int *num){
 }
 
 // Para testar
-int decresArray (endPar *arPares)
-{
+int decresArray (endPar *arPares){
     int maior = 0,ind = 0,result = 0;
     for (int i = 0; i < CHARS; i++){
         maior = arPares[i] -> snd;
@@ -133,7 +135,7 @@ int melhorDiv (endPar *arrPares,int i,int j){
     int mtotal = (somaArray (arrPares,i,j)) / 2;
     for (ind = i; ind < j && soma <= mtotal; ind++) soma += (arrPares[ind] -> snd);
     ind --;
-    if ((soma - mtotal) > (abs(somaArray (arrPares, ind, j) - mtotal))) ind = ind - 1;
+    if (((soma - mtotal) > (abs(somaArray (arrPares, ind, j) - mtotal)))) ind = ind - 1;
     return ind;
 }
 

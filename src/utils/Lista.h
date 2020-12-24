@@ -36,3 +36,5 @@ void addToLista(LISTA l, char elem);
 void setSize(LISTA l, int size);
 
 void resetLista (LISTA l);
+
+void freeLista (LISTA l);

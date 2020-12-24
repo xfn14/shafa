@@ -26,3 +26,8 @@ void  cpPar_Snd (endPar source[], endPar dest[], int size, int def){
         setPar(dest[i],source [i] -> fst, def);
     }
 }
+
+void freeArPares (endPar ar[],int size){
+    for(int i = 0;i < size; i++) free( ar [i]);
+    free(ar);
+}
