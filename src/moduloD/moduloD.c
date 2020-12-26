@@ -20,7 +20,7 @@ void rle_decompression(char *filename, char *new_file, int *size_array, int nr_b
     {
         int block_size = size_array[i]; //keep track of the current size of the block
         D_Array new_buffer;
-        initArray(&new_buffer, block_size);                                      //initiate dyanmic array
+        initArray(&new_buffer, block_size);                                   //initiate dyanmic array
         unsigned char *temp_buffer = malloc(sizeof(unsigned char) * block_size); //buffer for the reading
         if (fread(temp_buffer, sizeof(unsigned char), block_size, ptr) == 0)     //read the current block
             return;

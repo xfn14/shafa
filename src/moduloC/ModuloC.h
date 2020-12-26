@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "c_array.h"
+#include "math.h"
 #include "../utils/Lista.h"
 
 /**
@@ -12,44 +14,29 @@
 void moduloC(char *filename);
 
 /**
- * @brief Optimizar a codificação binária SF com matrizes de bytes
- * 
- * @param[in] symbols 
- * @param[in] n_symbols 
- * @param[in] codes 
- * @param[in] index 
- * @param[in] next
- * @param[out] coded_sequence
+ * @brief Shannon-Fano encoding
+ *
+ * @param filename
+ * @param out_file
+ * @param codes_lists
  */
-char*[] binary_coding(unsigned char symbols[], int n_symbols, unsigned char codes[], unsigned int index[], unsigned char next[]);
+void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists);
 
 /**
- * @brief Calcular a lista de indexs
- * 
- * @param[in] symbols 
- * @param[in] n_symbols 
- * @param[in] codes 
- * @param[out] index
+ * @brief Reads a number in a file until the next '@'
+ *
+ * @param[in] file
+ * @return[out] n
  */
-int[] calculateIndexs(unsigned char symbols[], int n_symbols, unsigned char codes[]);
+long readIntInCod(FILE *fp);
 
 /**
- * @brief Read a .cod file and store the codes on a array
- * 
- * @param[in] fp_in 
- * @param[in] filename
- * @param[out] codes
+ * @brief Reverse a number
+ *
+ * @param[in] n
+ * @param[out] reversed
  */
-unsigned char* readCodFile(FILE *fp_in, unsigned char *filename);
-
-/**
- * @brief Obter maximo de bits do codigo SF
- * 
- * @param[in] codes 
- * @param[in] n_symbols 
- * @param[out] code_max_size 
- */
-int code_max_size(unsigned char *codes[], int n_symbols);
+int reverse(int n);
 
 /**
  * @brief Print no terminal a informação final de execução
