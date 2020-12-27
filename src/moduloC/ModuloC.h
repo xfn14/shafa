@@ -4,7 +4,7 @@
 #include <string.h>
 #include "c_array.h"
 #include "math.h"
-#include "../utils/Lista.h"
+#include "../moduloD/d_array.h"
 
 /**
  * @brief Codificação de um ficheiro de símbolos
