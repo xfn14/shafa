@@ -1,6 +1,8 @@
 #include "ModuloC.h"
 
 #define MAX_FILENAME 100
+#define BLOCK_MAX_SIZE 2048
+#define CODE_MAX_SIZE 8
 
 /**
  * @[número_de_blocos]
@@ -29,52 +31,60 @@ void moduloC(char *main_file){
     print_final_info(start_time, shaf_file);
 }
 
-//TODO
-unsigned char* readCodFile(FILE *fp_in, unsigned char *filename){
-    unsigned char *codes, *temp_buffer;
-    unsigned long long total;
+// TODO
+void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists){
+    // Open in and out files
+    FILE *in = fopen(filename, "rb"), *out = fopen(out_file, "wb+");
 
-    FILE *fp;
-    if(filename == NULL || *filename == 0){
-        fp = fp_in;
-    }else{
-        fp = fopen(filename, "rb");
-        if(fp == NULL) return NULL;
-    }
+    // Get in file size info
 
-    fseek(fp, 0L, SEEK_END);
-    total = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);
+//    block_size = 2048; // default block_size (amend)
+//    n_blocks = fsize(in, NULL, &block_size, &size_of_last_block);
+//    total = (n_blocks-1)*block_size+size_of_last_block;
 
-    temp_buffer = malloc(sizeof(unsigned char) * total);
+    // Iterate all blocks
+//    for(int crt_block = 0; crt_block < n_blocks; crt_block++){
+//        code_list_struct block_code_list = codes_lists->lists[crt_block];
+//        unsigned long crt_block_size = (crt_block+1)==n_blocks ? size_of_last_block : block_size;
+//        unsigned char *crt_block_buffer = malloc(sizeof(unsigned char)*crt_block_size);
+//        fread(crt_block_buffer, sizeof(unsigned char), crt_block_size, in);
+//
+//
+//        for(int i = 0; i < crt_block_size; i++){
+//            unsigned char crt_symb = crt_block_buffer[i];
+//            code_struct code_to_use;
+//            for(int j = 0; j < block_code_list.len; j++){
+//                if(block_code_list.codes[j] == crt_symb);
+//            }
+//        }
+//    }
 
-    fread(temp_buffer, sizeof(temp_buffer)*total, 1, fp);
-    for(int i = 0; i < 600; i++){
-        printf("%x ", temp_buffer[i]);
-    }
-
-    return codes;
+    fclose(in); fclose(out); // Close in and out files
 }
 
-char[] binary_coding(unsigned char symbols[], int n_symbols, unsigned char codes[], int index[], unsigned char next[]){
-    unsigned char *coded_sequence;
-    int offset = 0, ind_in = 0, ind_out = 0;
-    while(ind_in < n_symbols){
-        char symbol = symbols[ind_in] + offset;
-        int n_bytes_in_code = index[symbol];
-        char code = codes[symbol];
-        int ind_code = 0;
-        while (ind_code <= n_bytes_in_code){
-            coded_sequence[ind_out] = coded_sequence[ind_out]|code[ind_code];
-            if(ind_code < n_bytes_in_code){
-                ind_out = ind_out + 1;
-                ind_code = ind_code + 1;
-            }
+long readIntInCod(FILE *fp){
+    int decimal = 0;
+    char crt_char = '0';
+    long finalN = 0;
+    while(crt_char != '@'){
+        fread(&crt_char, sizeof(char), 1, fp); decimal++;
+        if(crt_char != '@'){
+            int crt_int = atoi(&crt_char);
+            printf("%d", crt_int);
+            finalN = (long) pow(10, decimal)*crt_int + finalN;
         }
-        offset = next[symbol];
-        ind_in = ind_in + 1;
     }
-    return coded_sequence;
+    return reverse(finalN/10);
+}
+
+int reverse(int n){
+    int rev = 0, remainder;
+    while(n != 0){
+        remainder = n % 10;
+        rev = rev * 10 + remainder;
+        n /= 10;
+    }
+    return rev;
 }
 
 void print_final_info(clock_t start_time, char shaf_file[]){
