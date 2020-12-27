@@ -1,8 +1,6 @@
 #include "ModuloC.h"
 
 #define MAX_FILENAME 100
-#define BLOCK_MAX_SIZE 2048
-#define CODE_MAX_SIZE 8
 
 /**
  * @[número_de_blocos]
@@ -31,35 +29,44 @@ void moduloC(char *main_file){
     print_final_info(start_time, shaf_file);
 }
 
-// TODO
-void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists){
+void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_lists, D_Matrix *out_bytes) {
     // Open in and out files
-    FILE *in = fopen(filename, "rb"), *out = fopen(out_file, "wb+");
+    FILE *in;
+    in = fopen(in_file, "rb");
+    fseek(in, 0, SEEK_SET);
 
-    // Get in file size info
+    for (int i = 0; i < codes_lists->len; i++) {
+        code_list_struct crt_code_list = codes_lists->lists[i];
+        unsigned char *crt_block_buffer = malloc(crt_code_list.block_size * sizeof(unsigned char));
+        fread(crt_block_buffer, sizeof(unsigned char), crt_code_list.block_size, in);
 
-//    block_size = 2048; // default block_size (amend)
-//    n_blocks = fsize(in, NULL, &block_size, &size_of_last_block);
-//    total = (n_blocks-1)*block_size+size_of_last_block;
+        D_Array crt_byte;
+        initArray(&crt_byte, 8);
+        clear_byte(&crt_byte);
 
-    // Iterate all blocks
-//    for(int crt_block = 0; crt_block < n_blocks; crt_block++){
-//        code_list_struct block_code_list = codes_lists->lists[crt_block];
-//        unsigned long crt_block_size = (crt_block+1)==n_blocks ? size_of_last_block : block_size;
-//        unsigned char *crt_block_buffer = malloc(sizeof(unsigned char)*crt_block_size);
-//        fread(crt_block_buffer, sizeof(unsigned char), crt_block_size, in);
-//
-//
-//        for(int i = 0; i < crt_block_size; i++){
-//            unsigned char crt_symb = crt_block_buffer[i];
-//            code_struct code_to_use;
-//            for(int j = 0; j < block_code_list.len; j++){
-//                if(block_code_list.codes[j] == crt_symb);
-//            }
-//        }
-//    }
+        int offset, index, next = 0;
+        for(int j = 0; j < 10/*crt_code_list.block_size*/; j++){
+            unsigned char crt_symb = crt_block_buffer[j];
+            code_struct code_to_use;
+            initCode(&code_to_use);
+            code_to_use = getSymbCode(&crt_code_list, crt_symb, offset);
+            printCode(&code_to_use);
 
-    fclose(in); fclose(out); // Close in and out files
+
+            // TODO fix
+            or_opp(&crt_byte, code_to_use.code, 0);
+            if(code_to_use.index == 1){
+                addLineMatrix(out_bytes, crt_byte);
+                clear_byte(&crt_byte);
+                if(code_to_use.next != 0){
+                    or_opp(&crt_byte, code_to_use.code, 1);
+                }
+            }
+            offset = code_to_use.next;
+        }
+    }
+
+    fclose(in);
 }
 
 void readCodFile(char *filename, codes_lists_struct *codes_lists){
@@ -74,7 +81,7 @@ void readCodFile(char *filename, codes_lists_struct *codes_lists){
     fseek(in, chars_read, SEEK_SET);
 
     long n_blocks = readIntInCod(in);
-    printf("n_blocks: %ld\n", n_blocks);
+//    printf("n_blocks: %ld\n", n_blocks);
 
     initCodesLists(codes_lists);
 

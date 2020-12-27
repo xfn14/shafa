@@ -51,8 +51,9 @@ void add_first(D_Array *a, unsigned char element);
  *
  * @param[in] arr1
  * @param[in] arr2
+ * @param[in] mode
  */
-void or_opp(D_Array *arr1, D_Array arr2);
+void or_opp(D_Array *arr1, D_Array arr2, int mode);
 
 /**
  * @brief Clears the contents of an arr
@@ -68,4 +69,18 @@ void clearArray(D_Array *a);
  * @param[in] mode (1 - decimal / 0 - char)
  */
 void print_array(D_Array *a, int mode);
+
+/**
+ * @brief Initialize an arr has a byte
+ *
+ * @param[in] arr
+ */
+void initByte(D_Array *arr);
+
+/**
+ * @brief Sets a byte size array to 0
+ *
+ * @param arr
+ */
+void clear_byte(D_Array *arr);
 #endif
