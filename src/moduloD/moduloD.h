@@ -1,12 +1,17 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+
+#include "d_array.h"
+#include "tree.h"
+#include "auxiliar.h"
 
 #ifndef _MODULO_D_
 #define _MODULO_D_
 
 
-//decompression of an rle file to original file
-void rle_decompression(char *filename, char *new_file, int* size_array, int nr_blocks);
+//main function
+int moduloD(int argc, char **argv);
+
 #endif
