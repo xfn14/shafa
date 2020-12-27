@@ -1,9 +1,9 @@
 #include <stdio.h>
+#include "../moduloD/d_array.h"
 
 typedef struct {
     unsigned char symb;
-    unsigned char *code;
-    int len;
+    D_Array code;
     int offset;
     int index;
     int next;
@@ -12,6 +12,7 @@ typedef struct {
 typedef struct {
     code_struct *codes;
     int len;
+    long block_size;
 } code_list_struct;
 
 typedef struct {
@@ -20,11 +21,13 @@ typedef struct {
 } codes_lists_struct;
 
 void initCode(code_struct *code);
-void insertCharCode(code_struct *code, unsigned char cat);
+void setCode(code_struct *code, D_Array code_arr);
+void setCodeSymb(code_struct *code, unsigned char symb);
 void setCodeOffset(code_struct *code, int offset);
 void setCodeIndex(code_struct *code, int index);
 void setCodeNext(code_struct *code, int next);
 void printCode(code_struct *code);
+void setListBlockSize(code_list_struct *list, long block_size);
 void freeCode(code_struct *code);
 void initList(code_list_struct *list);
 void insertCodeList(code_list_struct *list, code_struct code);
@@ -36,13 +39,14 @@ void freeCodesLists(codes_lists_struct *codes_lists);
 
 void initCode(code_struct *code){
     code->symb = -1;
-    code->code = malloc(16*sizeof(unsigned char));
-    code->len = code->offset = code->index = code->next = 0;
+    initArray(&code->code, 8);
+    code->offset = code->index = code->next = 0;
 }
 
 void initList(code_list_struct *list){
     list->codes = malloc(sizeof(code_struct));
     list->len = 0;
+    list->block_size = 0;
 }
 
 void initCodesLists(codes_lists_struct *codes_lists){
@@ -50,10 +54,13 @@ void initCodesLists(codes_lists_struct *codes_lists){
     codes_lists->len = 0;
 }
 
-void insertCharCode(code_struct *code, unsigned char cat){
-    code->len++;
-    code->code = realloc(code->code, (code->len+1)*sizeof(unsigned char));
-    code->code[code->len-1] = cat;
+void setCode(code_struct *code, D_Array code_arr){
+    D_Array copy;
+    initArray(&copy, code_arr.size);
+    for(int i = 0; i < code_arr.used; i++){
+        insertArray(&copy, code_arr.array[i]);
+    }
+    code->code = copy;
 }
 
 void setCodeSymb(code_struct *code, unsigned char symb){
@@ -65,7 +72,7 @@ void setCodeOffset(code_struct *code, int offset){
 }
 
 void setCodeIndex(code_struct *code, int index){
-    code->offset = index;
+    code->index = index;
 }
 
 void setCodeNext(code_struct *code, int next){
@@ -78,6 +85,10 @@ void insertCodeList(code_list_struct *list, code_struct code){
     list->codes[list->len-1] = code;
 }
 
+void setListBlockSize(code_list_struct *list, long block_size){
+    list->block_size = block_size;
+}
+
 void insertCodesLists(codes_lists_struct *codes_lists, code_list_struct code_list){
     codes_lists->len++;
     codes_lists->lists = realloc(codes_lists->lists, (codes_lists->len+1)*sizeof(codes_lists_struct));
@@ -86,10 +97,8 @@ void insertCodesLists(codes_lists_struct *codes_lists, code_list_struct code_lis
 
 void printCode(code_struct *code){
     printf("symb: %c; code: ", code->symb);
-    for(int i = 0; i < code->len; i++){
-        printf("%c", code->code[i]);
-    }
-    printf("; len = %d; offset: %d; index: %d; next: %d\n", code->len, code->offset, code->index, code->next);
+    print_array(&code->code, 0);
+    printf("; offset: %d; index: %d; next: %d\n", code->offset, code->index, code->next);
 }
 
 void printList(code_list_struct *list){
@@ -100,17 +109,16 @@ void printList(code_list_struct *list){
 
 void printCodesLists(codes_lists_struct *codes_lists){
     for(int i = 0; i < codes_lists->len; i++){
-        printf("---------------------- v block: %d v ----------------------\n", i);
+        printf("------------------------ v block: %d v ------------------------\n", i);
         printList(&codes_lists->lists[i]);
     }
-    printf("----------------------------------------------------------\n");
+    printf("--------------------------------------------------------------\n");
 }
 
 void freeCode(code_struct *code){
     code->symb = -1;
-    free(code->code);
-    code->code = NULL;
-    code->len = code->offset = code->index = code->next = 0;
+    freeArray(&code->code);
+    code->offset = code->index = code->next = 0;
 }
 
 void freeList(code_list_struct *list){
@@ -120,6 +128,7 @@ void freeList(code_list_struct *list){
     free(list->codes);
     list->codes = NULL;
     list->len = 0;
+    list->block_size = 0;
 }
 
 void freeCodesLists(codes_lists_struct *codes_lists){
