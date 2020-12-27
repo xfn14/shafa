@@ -23,6 +23,14 @@ void moduloC(char *filename);
 void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists);
 
 /**
+ * @brief Gets the codes from the cod file and stores everything in the codes_lists
+ *
+ * @param[in] filename
+ * @param[in,out] codes_lists
+ */
+void readCodFile(char *filename, codes_lists_struct *codes_lists);
+
+/**
  * @brief Reads a number in a file until the next '@'
  *
  * @param[in] file

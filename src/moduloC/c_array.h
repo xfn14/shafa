@@ -109,10 +109,10 @@ void printList(code_list_struct *list){
 
 void printCodesLists(codes_lists_struct *codes_lists){
     for(int i = 0; i < codes_lists->len; i++){
-        printf("------------------------ v block: %d v ------------------------\n", i);
+        printf("------------------------ v block: %d (%ld) v ------------------------\n", i, codes_lists->lists[i].block_size);
         printList(&codes_lists->lists[i]);
     }
-    printf("--------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------------\n");
 }
 
 void freeCode(code_struct *code){

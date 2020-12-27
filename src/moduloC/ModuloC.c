@@ -62,14 +62,11 @@ void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_li
     fclose(in); fclose(out); // Close in and out files
 }
 
-void readCodFile(char *filename){
+void readCodFile(char *filename, codes_lists_struct *codes_lists){
     FILE *in;
     in = fopen(filename, "rb");
 
     char normal_rle;
-    unsigned long long total;
-    unsigned long size_of_last_block;
-
     fseek(in, 1, SEEK_SET);
     fread(&normal_rle, sizeof(char), 1, in);
 //    printf("%c\n", normal_rle);
@@ -79,8 +76,7 @@ void readCodFile(char *filename){
     long n_blocks = readIntInCod(in);
     printf("n_blocks: %ld\n", n_blocks);
 
-    codes_lists_struct codes_lists; // output
-    initCodesLists(&codes_lists);
+    initCodesLists(codes_lists);
 
     for(int i = 0; i < n_blocks; i++){
         code_list_struct block_codes;
@@ -115,14 +111,12 @@ void readCodFile(char *filename){
                             insertArray(&offset_code, crt_code.array[p]);
                         }
 
-                        printf("%d\n", offset_code.used);
-
                         if(offset_code.used > 7){
                             setCodeIndex(&act_code, 1);
                             setCodeNext(&act_code, offset_code.used-8);
                         }else{
                             setCodeIndex(&act_code, 0);
-                            setCodeNext(&act_code, 8-offset_code.used);
+                            setCodeNext(&act_code, offset_code.used);
                         }
 
                         // Add the bits until 16bit code
@@ -143,11 +137,10 @@ void readCodFile(char *filename){
                 }
             }
         }
-        insertCodesLists(&codes_lists, block_codes);
+        insertCodesLists(codes_lists, block_codes);
         freeArray(&crt_code);
     }
-
-    printCodesLists(&codes_lists);
+//    printCodesLists(codes_lists);
 }
 
 long readIntInCod(FILE *fp){

@@ -53,6 +53,13 @@ void freeArray(D_Array *a) {
     a->used = a->size = 0;
 }
 
+void or_opp(D_Array *arr1, D_Array arr2){
+    if(arr1->used != arr2.used) return;
+    for(int i = 0; i < arr1->used; i++){
+        arr1->array[i] = (arr1->array[i] == '1' || arr2->array[i] == '1') ? '1' : '0';
+    }
+}
+
 void print_array(D_Array *a, int mode) {
     //printf ("array with length of %d\n",a->used);
     for (int i = 0; i < a->used; i++) {
