@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "c_array.h"
 #include "math.h"
 #include "../moduloD/d_array.h"
+#include "c_array.h"
+#include "d_matrix.h"
 
 /**
  * @brief Codificação de um ficheiro de símbolos
@@ -16,11 +17,12 @@ void moduloC(char *filename);
 /**
  * @brief Shannon-Fano encoding
  *
- * @param filename
- * @param out_file
- * @param codes_lists
+ * @param[in] filename
+ * @param[in] out_file
+ * @param[in] codes_lists
+ * @param[in,out] out_bytes
  */
-void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists);
+void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_lists, D_Matrix *out_bytes);
 
 /**
  * @brief Gets the codes from the cod file and stores everything in the codes_lists

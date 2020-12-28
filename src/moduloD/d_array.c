@@ -50,11 +50,42 @@ void freeArray(D_Array *a) {
     a->array = NULL;
     a->used = a->size = 0;
 }
-void or_opp(D_Array *arr1, D_Array arr2){
-    if(arr1->used != arr2.used) return;
-    for(int i = 0; i < arr1->used; i++){
-        arr1->array[i] = (arr1->array[i] == '1' || arr2.array[i] == '1') ? '1' : '0';
+
+void or_opp(D_Array *arr1, D_Array *arr2, int mode){
+    if((arr1->used)*2 != arr2->used){
+        printf("error, invalid arr");
+        printf("%d %d\n", arr1->used, arr2->used);
+        return;
     }
+
+    for(int i = 0; i < 8; i++){
+        if(mode){
+            arr1->array[i] = arr2->array[i+8] == '1' ? '1' : '0';
+        }else{
+            arr1->array[i] = (arr1->array[i] == '1' || arr2->array[i] == '1') ? '1' : '0';
+        }
+    }
+}
+
+void initByte(D_Array *arr){
+    arr->used = 8;
+    arr->size = 9;
+    arr->array = malloc(arr->size*sizeof(unsigned char));
+    for(int i = 0; i < 8; i++){
+        arr->array[i] = '0';
+    }
+}
+
+void clear_byte(D_Array *arr){
+    if(arr->used > 8){
+        for(int i = 8; i < arr->used; i++){
+            arr->array[i] = 0;
+        }
+    }
+    for(int i = 0; i < 8; i++){
+        arr->array[i] = '0';
+    }
+    arr->used = 8;
 }
 
 void print_array(D_Array *a, int mode) {

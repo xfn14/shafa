@@ -20,6 +20,7 @@ typedef struct {
     int len;
 } codes_lists_struct;
 
+void getSymbCode(code_list_struct *code_list, unsigned char symb, int offset, code_struct *out_code);
 void initCode(code_struct *code);
 void setCode(code_struct *code, D_Array code_arr);
 void setCodeSymb(code_struct *code, unsigned char symb);
@@ -61,6 +62,16 @@ void setCode(code_struct *code, D_Array code_arr){
         insertArray(&copy, code_arr.array[i]);
     }
     code->code = copy;
+}
+
+void getSymbCode(code_list_struct *code_list, unsigned char symb, int offset, code_struct *out_code){
+    for(int i = 0; i < code_list->len; i++){
+        if(code_list->codes[i].symb == symb
+           && code_list->codes[i].offset == offset){
+//            printCode(&code_list->codes[i]);
+            *out_code = code_list->codes[i];
+        }
+    }
 }
 
 void setCodeSymb(code_struct *code, unsigned char symb){
