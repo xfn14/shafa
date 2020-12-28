@@ -22,7 +22,7 @@ int rle_decompression(char *filename, char *new_file, int *input_array, int* out
                 input_array[block++] = u - anterior;
                 anterior = input_array[block -1];
                 fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);
-                clearArray(&new_buffer,output_array[block]);
+                clearArray(&new_buffer);
                 }
         }
         else {
@@ -30,7 +30,7 @@ int rle_decompression(char *filename, char *new_file, int *input_array, int* out
                 output_array[block++] = new_buffer.used;
                 anterior = input_array[block -1];
                 fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);
-                clearArray(&new_buffer,output_array[block]);
+                clearArray(&new_buffer);
             }
         }
         if (temp_buffer[u] == 0)  //for the rle compression case
@@ -122,8 +122,8 @@ int shaf_decompression(char *read_file, char *output_file, int *block_size, int 
             index--;
             flag = 1;
             fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp);
-            clearArray(&new_buffer, block_size[block]);
-            clearArray(&array, 8);
+            clearArray(&new_buffer);
+            clearArray(&array);
             tree = array_tree[block];
         } else {
             unsigned char res;
@@ -136,7 +136,7 @@ int shaf_decompression(char *read_file, char *output_file, int *block_size, int 
                     insertArray(&array, bin[i]);  //insert the bit in the array
                     if (search_tree(tree, &array, &res, 0) == 1) {
                         insertArray(&new_buffer, res);
-                        clearArray (&array,8);
+                        clearArray (&array);
                     }
                 }
             }
