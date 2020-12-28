@@ -1,24 +1,39 @@
 #include "moduloF.h"
 
-#define E_BAD_DESTINATION -1
-/*
-  if ( !outputFile )
-        {
-            printf( "File %s cannot be opened for writing\n", filename );
-            return E_BAD_DESTINATION; 
-        }*/
+char *dotfreq(char *filename){
+    int length = strlen(filename) *2;
+    char *newfilename = malloc(length* sizeof(char));
+    strcpy (newfilename, filename);
+    strcat (newfilename, ".freq");
+return newfilename;
+}
 
-void createfreqfile(long long n_blocks){
+char *dotrle(char *filename){
+    int length = strlen(filename) *2;
+    char *newfilename = malloc(length* sizeof(char));
+    strcpy (newfilename, filename);
+    strcat (newfilename, ".rle");
+return newfilename;
+}
+
+void createfreqfile(long long n_blocks, char *filename, int flagoriginal){
     FILE *fp;
-    fp = fopen ("exaaa.txt.freq", "wb");
-    fprintf(fp, "@N@%lld@", n_blocks);
+    fp = fopen (filename, "wb");
+    if (flagoriginal) fprintf(fp, "@N@%lld@", n_blocks);
+    else fprintf (fp, "@R@%lld@", n_blocks);
     fclose(fp);
 }
 
-void freqsoriginal(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, int onlyoneblock){
+void createrlefile(char *filename){
+    FILE *fp;
+    fp = fopen (filename, "wb");
+    fclose(fp);
+}
+
+void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, int onlyoneblock, char *filename, int flagoriginal){
     FILE *orifreqs;
-    if (flaginit) createfreqfile(n_blocks);
-    orifreqs = fopen ("exaaa.txt.freq", "ab");  
+    if (flaginit) createfreqfile(n_blocks, filename, flagoriginal);
+    orifreqs = fopen (filename, "ab");  
     fprintf(orifreqs, "%d@", sizebuffer);
     int i, j, counter=0, counterant;
     for (j=0; j<256; j++){
@@ -38,7 +53,6 @@ void freqsoriginal(unsigned char *buffer, int sizebuffer, long long n_blocks, in
         if(j!=255) fprintf(orifreqs, ";");
         counterant=counter;
     }
-    //if (counter>0) printf("unsigned char nº%d => %d ocorrências\n", j, counter);
     counter=0;
     }
     fprintf(orifreqs, "@");
@@ -46,9 +60,8 @@ void freqsoriginal(unsigned char *buffer, int sizebuffer, long long n_blocks, in
     fclose(orifreqs);
 }
 
-int rlecheck(char *buffer, int sizebuffer){
-    int i, counter=1, simbs=0, ret = 0;
-    float taxacomp;
+int simbcount(char *buffer, int sizebuffer){
+    int i, counter=1, simbs=0;
     for (i = 0; i<sizebuffer; i++)
     {
         while (*((buffer)+i) == *((buffer)+i+1))
@@ -60,22 +73,24 @@ int rlecheck(char *buffer, int sizebuffer){
         else simbs += counter;
         counter=1;
 }
-//    printf ("simbs=%d\n", simbs);
+return simbs;
+}
+
+int rlecheck(char *buffer, int sizebuffer){
+    int ret = 0, simbs;
+    float taxacomp;
+    simbs = simbcount (buffer, sizebuffer);
     taxacomp =  (sizebuffer-simbs);
     taxacomp /= sizebuffer;
-   // printf ("taxa_comp = %f\n",  taxacomp);
     if (taxacomp > 0.05) ret = 1;
-    //printf("ret=%d\n", ret);
-//fclose (rlecheck);
 return ret;
 }
 
-int rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs){
-      FILE *rlecheck;
-    rlecheck = fopen("exaaa.txt.rle", "wb");
-    int i, counter=1;
+unsigned char *rlebuffertransformation(unsigned char *buffer, int sizebuffer){
+    int i, j=0, counter = 1;
+    unsigned char *rlebuffer = malloc (sizebuffer* sizeof(unsigned char));
     unsigned char c, zero=0;
-    for (i = 0; i<sizebuffer; i++)
+    for (i = 0; i < sizebuffer; i++)
     {
         c= *((buffer)+i);
         while (*((buffer)+i) == *((buffer)+i+1))
@@ -84,25 +99,43 @@ int rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs){
             i++;
         }
         if (counter >3){ 
-            fprintf (rlecheck, "%c%c%c", zero, c, counter);
-            simbs+=3;
+                unsigned char cont = counter;
+                *(rlebuffer + j)=zero;
+                *(rlebuffer + j+1)=c;
+                *(rlebuffer + j+2)=cont;
+                j+=3;            
         }
         else if (counter == 3){ 
-            fprintf (rlecheck, "%c%c%c", c, c, c);
-            simbs+=3;
+            *(rlebuffer + j)=c;
+            *(rlebuffer + j+1)=c;
+            *(rlebuffer + j+2)=c;
+            j+=3;
         }
         else if (counter == 2) {
-            fprintf (rlecheck, "%c%c", c, c);
-            simbs+=2;
+            *(rlebuffer + j)=c;
+            *(rlebuffer + j+1)=c;
+            j+=2;
         }
         else{
-            fprintf (rlecheck, "%c", c);
-            simbs++;
+            *(rlebuffer + j)=c;
+            j++;
         }
         counter=1;
+    }
+return rlebuffer;
 }
-fclose (rlecheck);
-return simbs;
+
+void rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs, char *filename){
+    FILE *rle;
+    if (flaginit) createrlefile(filename);
+    rle = fopen (filename, "ab"); 
+    int i, counter=1;
+    unsigned char c, zero=0;
+    for (int z = 0; z < sizebuffer; z++)
+        {
+            fprintf (rle,"%c", *(buffer+z));
+        }
+fclose (rle);
 }
 
 float split (char *filename, unsigned long block_size) {
@@ -111,6 +144,7 @@ float split (char *filename, unsigned long block_size) {
     unsigned long size_of_last_block;
     int bytesRead, flaginit=1, simbs=0; 
     float taxacomp; 
+    char *filenamefreq = dotfreq(filename), *filenamerle = dotrle(filename), *filenamerlefreq = dotfreq(filenamerle);
     FILE *exsistingFile;
     exsistingFile = fopen(filename,"rb"); 
     int i = 1, flag = 1, onlyoneblock, flagrle;
@@ -133,11 +167,21 @@ float split (char *filename, unsigned long block_size) {
                 return 0;
             } 
             if (flaginit && rlecheck(buffer, chunkSize)){
-               simbs += rlecompressing(buffer, flaginit, chunkSize, simbs);
+               unsigned char *rlebuff = rlebuffertransformation(buffer, chunkSize);
+               int rlesimbs = simbcount(buffer, chunkSize);
+               simbs += simbcount(buffer, chunkSize);
+               rlecompressing(rlebuff, flaginit, rlesimbs, simbs, filenamerle);
+               freqs(rlebuff, rlesimbs, n_blocks, flaginit, onlyoneblock, filenamerlefreq, 0);
                flagrle = 1;
             }
-            else if (flagrle) simbs += rlecompressing (buffer, flaginit, chunkSize, simbs);
-            freqsoriginal(buffer, chunkSize, n_blocks, flaginit, onlyoneblock);
+            else if (flagrle){
+                unsigned char *rlebuff = rlebuffertransformation(buffer, chunkSize);
+                int rlesimbs = simbcount(buffer, chunkSize);
+                simbs += simbcount(buffer, chunkSize);
+                rlecompressing (rlebuff, flaginit, rlesimbs, simbs, filenamerle);
+                freqs(rlebuff, rlesimbs, n_blocks, flaginit, onlyoneblock, filenamerlefreq, 0);
+            }
+            freqs(buffer, chunkSize, n_blocks, flaginit, onlyoneblock, filenamefreq, 1);
             flaginit = 0;
         }
         flag = 0;
@@ -159,8 +203,8 @@ long long number_of_blocks (char *filename, unsigned long block_size){
 return n_blocks;
 }
 
-
 int main(){
+   clock_t start_time = clock();
    time_t now;
    time(&now);
    struct tm *data = localtime(&now);
@@ -174,11 +218,12 @@ int main(){
 
    long long n_blocks = number_of_blocks(filename, block_size);
    float taxacomp;
-  
-
-   
 
    taxacomp = split (filename, block_size)*100;
+
+   clock_t stop_time = clock();
+   double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
+   time_t t = time(NULL);
 
    printf ("Daniela Carvalho (a93224) e Eduardo Magalhães (a93301), MIEI-CD, %02d/%02d/%d\n", day, month, year);
    printf ("Módulo: f (cálculo das frequências dos símbolos)\n");
@@ -186,7 +231,8 @@ int main(){
    printf ("Tamanho dos blocos analisados no ficheiro original: \n"); // ex = 65536/ 2013 bytes
    printf ("Compressão RLE : %f%c de compressão\n", taxacomp, '%'); // ex = aaaaaa.txt.rle (13% de compressão)
    printf ("Tamanho dos blocos analisados no ficheiro RLE: \n"); // ex = 57444/ 1620 bytes
-   printf ("Tempo de execução do módulo (milissegundos) : \n");
+   printf ("Tempo de execução do módulo (milissegundos) : %fms\n", elapsed);
    printf ("Ficheiros gerados: \n"); // ex = aaaaaa.txt.freq, aaaaaa.txt.rle.freq 
+
    return 0;
 }
