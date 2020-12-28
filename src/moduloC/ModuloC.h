@@ -4,7 +4,7 @@
 #include <string.h>
 #include "c_array.h"
 #include "math.h"
-#include "../utils/Lista.h"
+#include "../moduloD/d_array.h"
 
 /**
  * @brief Codificação de um ficheiro de símbolos
@@ -21,6 +21,14 @@ void moduloC(char *filename);
  * @param codes_lists
  */
 void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_lists);
+
+/**
+ * @brief Gets the codes from the cod file and stores everything in the codes_lists
+ *
+ * @param[in] filename
+ * @param[in,out] codes_lists
+ */
+void readCodFile(char *filename, codes_lists_struct *codes_lists);
 
 /**
  * @brief Reads a number in a file until the next '@'

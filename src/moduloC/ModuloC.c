@@ -62,6 +62,87 @@ void binary_encoding(char *filename, char *out_file, codes_lists_struct codes_li
     fclose(in); fclose(out); // Close in and out files
 }
 
+void readCodFile(char *filename, codes_lists_struct *codes_lists){
+    FILE *in;
+    in = fopen(filename, "rb");
+
+    char normal_rle;
+    fseek(in, 1, SEEK_SET);
+    fread(&normal_rle, sizeof(char), 1, in);
+//    printf("%c\n", normal_rle);
+    int chars_read = 3;
+    fseek(in, chars_read, SEEK_SET);
+
+    long n_blocks = readIntInCod(in);
+    printf("n_blocks: %ld\n", n_blocks);
+
+    initCodesLists(codes_lists);
+
+    for(int i = 0; i < n_blocks; i++){
+        code_list_struct block_codes;
+        initList(&block_codes);
+        long block_size = readIntInCod(in);
+        setListBlockSize(&block_codes, block_size);
+
+        unsigned char symb = 0;
+        unsigned char crt_char = 0;
+        D_Array crt_code;
+        initArray(&crt_code, 3);
+        while(crt_char != '@'){
+            fread(&crt_char, sizeof(unsigned char), 1, in);
+            if(crt_char == ';'){
+                if(crt_code.used != 0){
+                    for(int j = 0; j < 8; j++){
+                        code_struct act_code;
+                        initCode(&act_code);
+                        setCodeSymb(&act_code, symb);
+                        setCodeOffset(&act_code, j);
+
+                        D_Array offset_code;
+                        initArray(&offset_code, 5);
+                        // Make offset
+                        if(j != 0){
+                            for(int p = 0; p < j; p++){
+                                insertArray(&offset_code, '0');
+                            }
+                        }
+                        // Put actual code
+                        for(int p = 0; p < crt_code.used; p++){
+                            insertArray(&offset_code, crt_code.array[p]);
+                        }
+
+                        if(offset_code.used > 7){
+                            setCodeIndex(&act_code, 1);
+                            setCodeNext(&act_code, offset_code.used-8);
+                        }else{
+                            setCodeIndex(&act_code, 0);
+                            setCodeNext(&act_code, offset_code.used);
+                        }
+
+                        // Add the bits until 16bit code
+                        for(int p = offset_code.used; p < 16; p++){
+                            insertArray(&offset_code, '0');
+                        }
+
+                        setCode(&act_code, offset_code);
+                        insertCodeList(&block_codes, act_code);
+                        clearArray(&offset_code);
+                    }
+                    clearArray(&crt_code);
+                }
+                symb++;
+            }else{
+                if(crt_char != '@'){
+                    insertArray(&crt_code, crt_char);
+                }
+            }
+        }
+        insertCodesLists(codes_lists, block_codes);
+        freeArray(&crt_code);
+    }
+//    printCodesLists(codes_lists);
+}
+
 long readIntInCod(FILE *fp){
     int decimal = 0;
     char crt_char = '0';
@@ -70,7 +151,7 @@ long readIntInCod(FILE *fp){
         fread(&crt_char, sizeof(char), 1, fp); decimal++;
         if(crt_char != '@'){
             int crt_int = atoi(&crt_char);
-            printf("%d", crt_int);
+//            printf("%d", crt_int);
             finalN = (long) pow(10, decimal)*crt_int + finalN;
         }
     }
@@ -90,7 +171,9 @@ int reverse(int n){
 void print_final_info(clock_t start_time, char shaf_file[]){
     clock_t stop_time = clock();
     double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
-    printf("André Vaz (a93221) e Rui Alves, MIEI/CD\n"); // TODO Add time
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    printf("André Vaz (a93221) e Rui Alves, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
     printf("Módulo: c (Codificação de um ficheiro de símbolos)\n");
     printf("Número de blocos: _\n"); // TODO
     printf("Tamanho antes/depois & taxa de compressão (bloco _): _/_\n"); // TODO
