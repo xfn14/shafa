@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #ifndef _D_ARRAY_
 #define _D_ARRAY_
 

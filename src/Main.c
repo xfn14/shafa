@@ -13,6 +13,7 @@
 #include <string.h>
 //#include "moduloT/ModuloT.h"
 #include "moduloC/ModuloC.h"
+#include "moduloD/moduloD.h"
 
 int main(int argc, char *argv[]){
     if(argc == 4){
@@ -25,6 +26,8 @@ int main(int argc, char *argv[]){
                 case 'c':
                     moduloC(fileName);
                     break;
+                case 'd':
+                    moduloD(fileName);
                 default:
                     printf("Modulo inválido. Disponíveis: t,c");
                     return EXIT_FAILURE;
