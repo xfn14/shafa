@@ -44,22 +44,16 @@ void clearArray(D_Array *a){
     a->used = 0;
 }
 
+
 void freeArray(D_Array *a) {
     free(a->array);
     a->array = NULL;
     a->used = a->size = 0;
 }
-
-
-void clearArray (D_Array *a, size_t initialSize){
-    freeArray(a);
-    initArray(a,initialSize);
-}
-
 void or_opp(D_Array *arr1, D_Array arr2){
     if(arr1->used != arr2.used) return;
     for(int i = 0; i < arr1->used; i++){
-        arr1->array[i] = (arr1->array[i] == '1' || arr2->array[i] == '1') ? '1' : '0';
+        arr1->array[i] = (arr1->array[i] == '1' || arr2.array[i] == '1') ? '1' : '0';
     }
 }
 
