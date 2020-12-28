@@ -79,11 +79,11 @@ Abin do_tree(unsigned char *buffer, int *index, int file_size, int *block_size, 
 int read_cod(const char *filename, Abin *array_tree, int *block_size, int *nr_blocks) {
     FILE *fp;
     fp = fopen(filename, "rb");
-    int file_size = fsize(fp);
     if (fp == NULL) {
         printf("Can't open %s file\n", filename);
         return 0;
     }
+    int file_size = fsize(fp);
     unsigned char *buffer = malloc(sizeof(unsigned char) * file_size);
     if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0) return 0;
     int index = skip(0, 2, buffer);
@@ -192,31 +192,28 @@ int only_rle (char* filename, char *output_file,int *input_array,int *output_arr
 
 int moduloD(int argc, char **argv) {
     clock_t begin = clock();
-        int *output_array, nr_blocks, success = 1,*input_array = malloc (sizeof (int) *2), does_rle = 0;
+        int *output_array, nr_blocks, success = 1,*input_array = malloc (sizeof (int) *2), do_rle = 0, only_shaf = 0;
         output_array = malloc(sizeof(int) * 2);
         char *filename = argv[1];
         int size = strlen(filename);
         char cod_file[size - 1], output_file[size - 4],rle_file[size-4];
         Abin *array_tree = malloc(sizeof(Abin) * 2);
-        if (argc == 4){
-            if (argv[3][0] == 'r'){ //need some changes
+        if (argc == 4 && argv[3][0] == 'r'){
                 success = only_rle (filename,output_file,input_array,output_array,&nr_blocks);
-            }
         }
         else{
+            if (argc == 4 && argv[3][0] == 's') only_shaf = 1;
             get_filenames(filename, cod_file, output_file);
             success = read_cod(cod_file, array_tree, output_array, &nr_blocks);
             input_array = malloc (sizeof (int) *nr_blocks);
-            does_rle = strstr(output_file, "rle") == 0 ? 0 : 1;
+            do_rle = strstr(output_file, "rle") != 0 && !only_shaf ? 1 : 0;
             success = shaf_decompression(filename, output_file, output_array, input_array, array_tree);
-            //putchar('J');
             int len = strlen(output_file);
-            if (does_rle != 0) {
+            if (do_rle) {
                 strcpy(rle_file, output_file);
                 memset(output_file, 0, len);
                 strncpy(output_file, rle_file, len - 4);
                 rle_decompression(rle_file,output_file, input_array,output_array,0);
-                //remove(rle_file);
             }
         }
         clock_t end = clock();
@@ -224,13 +221,13 @@ int moduloD(int argc, char **argv) {
         time_t t = time(NULL);
         struct tm tm = *localtime(&t);
         if (success) {
-            printf("José Diogo,a93251 e António Fernandes, a93312, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+            printf("José Diogo,a93251, e António Fernandes, a93312, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
             printf("Módulo: d (descodificação dum ficheiro shaf)\n");
             printf("Número de blocos:%d\n", nr_blocks);
             for (int i = 1; i <= nr_blocks; i++)
                 printf("Tamanho antes/depois do ficheiro gerado (bloco %d):%d/%d\n", i, input_array[i - 1], output_array[i - 1]);
             printf("Tempo de execução do módulo (milissegundos):%f milissegundos\n", time_spent * 1000);
-            if (!does_rle) printf("Ficheiro gerado: %s\n", output_file);
+            if (!do_rle) printf("Ficheiro gerado: %s\n", output_file);
             else printf("Ficheiros gerados: %s e %s\n",output_file,rle_file);
         }
 
