@@ -1,8 +1,5 @@
 #include "d_array.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
 void initArray(D_Array *a, size_t initialSize) {
     a->array = malloc(initialSize * sizeof(unsigned char));
     a->used = 0;
@@ -53,6 +50,12 @@ void freeArray(D_Array *a) {
     a->used = a->size = 0;
 }
 
+
+void clearArray (D_Array *a, size_t initialSize){
+    freeArray(a);
+    initArray(a,initialSize);
+}
+
 void or_opp(D_Array *arr1, D_Array arr2){
     if(arr1->used != arr2.used) return;
     for(int i = 0; i < arr1->used; i++){
@@ -61,7 +64,6 @@ void or_opp(D_Array *arr1, D_Array arr2){
 }
 
 void print_array(D_Array *a, int mode) {
-    //printf ("array with length of %d\n",a->used);
     for (int i = 0; i < a->used; i++) {
         if (mode)
             printf("%d", a->array[i]);
@@ -70,14 +72,3 @@ void print_array(D_Array *a, int mode) {
     }
 //    putchar('\n');
 }
-/*
-void main (){
-  D_Array a;
-  initArray(&a,5);
-  insertArray (&a,'i');
-  insertArray (&a,'o');
-  insertArray (&a,'g');
-  insertArray (&a,'o');
-  insertHArray(&a,'d'); 
-  print_array(&a);
-}*/

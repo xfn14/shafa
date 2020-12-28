@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #ifndef _D_ARRAY_
 #define _D_ARRAY_
 
@@ -68,4 +71,5 @@ void clearArray(D_Array *a);
  * @param[in] mode (1 - decimal / 0 - char)
  */
 void print_array(D_Array *a, int mode);
+void clearArray (D_Array *a, size_t initialSize);
 #endif
