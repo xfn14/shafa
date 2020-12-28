@@ -44,23 +44,26 @@ void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_li
         initArray(&crt_byte, 8);
         clear_byte(&crt_byte);
 
-        int offset, index, next = 0;
-        for(int j = 0; j < 10/*crt_code_list.block_size*/; j++){
+        code_struct code_to_use;
+        initCode(&code_to_use);
+        int offset = 0;
+        for(int j = 0; j < crt_code_list.block_size; j++){
             unsigned char crt_symb = crt_block_buffer[j];
-            code_struct code_to_use;
-            initCode(&code_to_use);
-            code_to_use = getSymbCode(&crt_code_list, crt_symb, offset);
-            printCode(&code_to_use);
+            getSymbCode(&crt_code_list, crt_symb, offset, &code_to_use);
+//            printCode(&code_to_use);
 
 
-            // TODO fix
-            or_opp(&crt_byte, code_to_use.code, 0);
+//            print_array(&code_to_use.code, 0);
+            or_opp(&crt_byte, &code_to_use.code, 0);
+//            print_array(&crt_byte, 0);
+//            printf("\n");
             if(code_to_use.index == 1){
                 addLineMatrix(out_bytes, crt_byte);
                 clear_byte(&crt_byte);
-                if(code_to_use.next != 0){
-                    or_opp(&crt_byte, code_to_use.code, 1);
-                }
+//                print_array(&crt_byte, 0);
+//                print_array(&code_to_use.code, 0);
+//                printf("\n");
+                or_opp(&crt_byte, &code_to_use.code, 1);
             }
             offset = code_to_use.next;
         }
@@ -180,7 +183,7 @@ void print_final_info(clock_t start_time, char shaf_file[]){
     double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    printf("André Vaz (a93221) e Rui Alves, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
+    printf("André Vaz (a93221) e Rui Alves (a93252), MIEI/CD, %d-%02d-%02d\n", tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
     printf("Módulo: c (Codificação de um ficheiro de símbolos)\n");
     printf("Número de blocos: _\n"); // TODO
     printf("Tamanho antes/depois & taxa de compressão (bloco _): _/_\n"); // TODO

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "d_array.h"
+#include "../moduloD/d_array.h"
 
 typedef struct {
     D_Array *arr;

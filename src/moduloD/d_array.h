@@ -53,7 +53,7 @@ void add_first(D_Array *a, unsigned char element);
  * @param[in] arr2
  * @param[in] mode
  */
-void or_opp(D_Array *arr1, D_Array arr2, int mode);
+void or_opp(D_Array *arr1, D_Array *arr2, int mode);
 
 /**
  * @brief Clears the contents of an arr
