@@ -65,15 +65,29 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
     fclose(in);
 }
 
+unsigned char byte_to_char(D_Array *arr){
+    int crt = 0, res = 0;
+    for(int i = arr->used; i > 0; i--){
+        res += (int) pow(2, crt) * (arr->array[i] == '1' ? 1 : 0);
+        crt++;
+    }
+    return (unsigned char) res;
+}
+
 void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
     FILE *out;
     out = fopen(out_file, "wb+");
 
-    unsigned char init = '@';
-    fwrite(&init, 1, sizeof(unsigned char), out);
-
+    fprintf(out, "@%d@", coded_bytes->len);
     for(int i = 0; i < coded_bytes->len; i++){
-
+        D_Matrix crt_matrix = coded_bytes->list[i];
+        fprintf(out, "%d@", crt_matrix.len);
+        for(int j = 0; j < crt_matrix.len; j++){
+            unsigned char crt_byte = 0;
+            crt_byte = byte_to_char(&crt_matrix.arr[j]);
+            fprintf(out, "%c", crt_byte);
+        }
+        fprintf(out, "@");
     }
 
     fclose(out);
@@ -86,12 +100,10 @@ void readCodFile(char *filename, codes_lists_struct *codes_lists){
     char normal_rle;
     fseek(in, 1, SEEK_SET);
     fread(&normal_rle, sizeof(char), 1, in);
-//    printf("%c\n", normal_rle);
     int chars_read = 3;
     fseek(in, chars_read, SEEK_SET);
 
     long n_blocks = readIntInCod(in);
-//    printf("n_blocks: %ld\n", n_blocks);
 
     initCodesLists(codes_lists);
 
