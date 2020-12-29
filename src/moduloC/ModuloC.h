@@ -17,12 +17,19 @@ void moduloC(char *filename);
 /**
  * @brief Shannon-Fano encoding
  *
- * @param[in] filename
- * @param[in] out_file
+ * @param[in] in_file
  * @param[in] codes_lists
  * @param[in,out] out_bytes
  */
-void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_lists, D_Matrix *out_bytes);
+void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes);
+
+/**
+ * @brief Writes the coded bytes on the .shaf file
+ * 
+ * @param[out] out_file
+ * @param[in] coded_bytes
+ */
+void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes);
 
 /**
  * @brief Gets the codes from the cod file and stores everything in the codes_lists

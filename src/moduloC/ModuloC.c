@@ -29,13 +29,15 @@ void moduloC(char *main_file){
     print_final_info(start_time, shaf_file);
 }
 
-void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_lists, D_Matrix *out_bytes) {
-    // Open in and out files
+void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
     FILE *in;
     in = fopen(in_file, "rb");
     fseek(in, 0, SEEK_SET);
 
     for (int i = 0; i < codes_lists->len; i++) {
+        D_Matrix coded_bytes; // bytes for block
+        initMatrix(&coded_bytes);
+
         code_list_struct crt_code_list = codes_lists->lists[i];
         unsigned char *crt_block_buffer = malloc(crt_code_list.block_size * sizeof(unsigned char));
         fread(crt_block_buffer, sizeof(unsigned char), crt_code_list.block_size, in);
@@ -50,26 +52,31 @@ void binary_encoding(char *in_file, char *out_file, codes_lists_struct *codes_li
         for(int j = 0; j < crt_code_list.block_size; j++){
             unsigned char crt_symb = crt_block_buffer[j];
             getSymbCode(&crt_code_list, crt_symb, offset, &code_to_use);
-//            printCode(&code_to_use);
-
-
-//            print_array(&code_to_use.code, 0);
             or_opp(&crt_byte, &code_to_use.code, 0);
-//            print_array(&crt_byte, 0);
-//            printf("\n");
             if(code_to_use.index == 1){
-                addLineMatrix(out_bytes, crt_byte);
+                addLineMatrix(&coded_bytes, crt_byte);
                 clear_byte(&crt_byte);
-//                print_array(&crt_byte, 0);
-//                print_array(&code_to_use.code, 0);
-//                printf("\n");
                 or_opp(&crt_byte, &code_to_use.code, 1);
             }
             offset = code_to_use.next;
         }
+        insertMatrixInList(out_bytes, coded_bytes);
+    }
+    fclose(in);
+}
+
+void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
+    FILE *out;
+    out = fopen(out_file, "wb+");
+
+    unsigned char init = '@';
+    fwrite(&init, 1, sizeof(unsigned char), out);
+
+    for(int i = 0; i < coded_bytes->len; i++){
+
     }
 
-    fclose(in);
+    fclose(out);
 }
 
 void readCodFile(char *filename, codes_lists_struct *codes_lists){

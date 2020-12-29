@@ -44,7 +44,6 @@ void clearArray(D_Array *a){
     a->used = 0;
 }
 
-
 void freeArray(D_Array *a) {
     free(a->array);
     a->array = NULL;
@@ -60,7 +59,7 @@ void or_opp(D_Array *arr1, D_Array *arr2, int mode){
 
     for(int i = 0; i < 8; i++){
         if(mode){
-            arr1->array[i] = arr2->array[i+8] == '1' ? '1' : '0';
+            arr1->array[i] = (arr1->array[i] == '1' || arr2->array[i+8] == '1') ? '1' : '0';
         }else{
             arr1->array[i] = (arr1->array[i] == '1' || arr2->array[i] == '1') ? '1' : '0';
         }
@@ -89,6 +88,7 @@ void clear_byte(D_Array *arr){
 }
 
 void print_array(D_Array *a, int mode) {
+    //printf ("array with length of %d\n",a->used);
     for (int i = 0; i < a->used; i++) {
         if (mode)
             printf("%d", a->array[i]);
@@ -97,3 +97,14 @@ void print_array(D_Array *a, int mode) {
     }
 //    putchar('\n');
 }
+/*
+void main (){
+  D_Array a;
+  initArray(&a,5);
+  insertArray (&a,'i');
+  insertArray (&a,'o');
+  insertArray (&a,'g');
+  insertArray (&a,'o');
+  insertHArray(&a,'d');
+  print_array(&a);
+}*/
