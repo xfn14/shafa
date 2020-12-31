@@ -59,6 +59,10 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
                 or_opp(&crt_byte, &code_to_use.code, 1);
             }
             offset = code_to_use.next;
+
+            if(j == crt_code_list.block_size-1){
+                addLineMatrix(&coded_bytes, crt_byte);
+            }
         }
         insertMatrixInList(out_bytes, coded_bytes);
     }
@@ -67,7 +71,7 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
 
 unsigned char byte_to_char(D_Array *arr){
     int crt = 0, res = 0;
-    for(int i = arr->used; i > 0; i--){
+    for(int i = arr->used-1; i >= 0; i--){
         res += (int) pow(2, crt) * (arr->array[i] == '1' ? 1 : 0);
         crt++;
     }
@@ -79,6 +83,7 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
     out = fopen(out_file, "wb+");
 
     fprintf(out, "@%d@", coded_bytes->len);
+
     for(int i = 0; i < coded_bytes->len; i++){
         D_Matrix crt_matrix = coded_bytes->list[i];
         fprintf(out, "%d@", crt_matrix.len);
@@ -87,7 +92,7 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
             crt_byte = byte_to_char(&crt_matrix.arr[j]);
             fprintf(out, "%c", crt_byte);
         }
-        fprintf(out, "@");
+        if(i != coded_bytes->len-1) fprintf(out, "@");
     }
 
     fclose(out);
@@ -210,3 +215,19 @@ void print_final_info(clock_t start_time, char shaf_file[]){
     printf("Tempo de execução do módulo: %fms\n", elapsed);
     printf("Ficheiro gerado: %s\n", &shaf_file);
 }
+
+//int main_example(){
+//    codes_lists_struct codes_list;
+//    initCodesLists(&codes_list);
+//    readCodFile("../resources/aaa.txt.cod", &codes_list);
+//    printCodesLists(&codes_list);
+//
+//    printf("\n\n\n");
+//
+//    D_Matrix_List out_bytes;
+//    initMatrixList(&out_bytes);
+//    binary_encoding("../resources/aaa.txt", &codes_list, &out_bytes);
+//    printMatrixList(&out_bytes);
+//
+//    write_codes_in_file("out.shaf", &out_bytes);
+//}
