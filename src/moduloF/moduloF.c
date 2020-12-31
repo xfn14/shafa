@@ -1,5 +1,6 @@
 #include "moduloF.h"
 
+/*Função que cria o nome do ficheiro que contém as frequências, acrescentando .freq ao nome original do ficheiro*/
 char *dotfreq(char *filename){
     int length = strlen(filename) *2;
     char *newfilename = malloc(length* sizeof(char));
@@ -8,6 +9,7 @@ char *dotfreq(char *filename){
 return newfilename;
 }
 
+/*Função que cria o nome do ficheiro comprimido, acrescentando .rle ao nome original do ficheiro*/
 char *dotrle(char *filename){
     int length = strlen(filename) *2;
     char *newfilename = malloc(length* sizeof(char));
@@ -16,6 +18,7 @@ char *dotrle(char *filename){
 return newfilename;
 }
 
+/*Função que cria um ficheiro de frequências, indicando no início se é feito apartir do ficheiro original(N) ou do ficheiro comprimido(R)*/
 void createfreqfile(long long n_blocks, char *filename, int flagoriginal){
     FILE *fp;
     fp = fopen (filename, "wb");
@@ -24,12 +27,14 @@ void createfreqfile(long long n_blocks, char *filename, int flagoriginal){
     fclose(fp);
 }
 
+/*Função que cria um ficheiro comprimido*/
 void createrlefile(char *filename){
     FILE *fp;
     fp = fopen (filename, "wb");
     fclose(fp);
 }
 
+/*Função que escreve no ficheiro de frequências, criado pela função createfreqfile, a frequência de cada símbolo em cada bloco do ficheiro dado*/
 void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, int onlyoneblock, char *filename, int flagoriginal){
     FILE *orifreqs;
     if (flaginit) createfreqfile(n_blocks, filename, flagoriginal);
@@ -60,6 +65,7 @@ void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flagin
     fclose(orifreqs);
 }
 
+/*Função que conta quantos símbolos o ficheiro comprimido (ficheiro rle) tem*/
 int simbcount(char *buffer, int sizebuffer){
     int i, counter=1, simbs=0;
     for (i = 0; i<sizebuffer; i++)
@@ -76,6 +82,7 @@ int simbcount(char *buffer, int sizebuffer){
 return simbs;
 }
 
+/*Função que verifica se é ou não para comprimir o ficheiro*/
 int rlecheck(char *buffer, int sizebuffer, unsigned long long total){
     int ret = 0, simbs;
     float taxacomp;
@@ -93,6 +100,7 @@ int rlecheck(char *buffer, int sizebuffer, unsigned long long total){
 return ret;
 }
 
+/*Função que transforma o ficheiro original num ficheiro comprimido*/
 unsigned char *rlebuffertransformation(unsigned char *buffer, int sizebuffer){
     int i, j=0, counter = 1;
     unsigned char *rlebuffer = malloc (sizebuffer* sizeof(unsigned char));
@@ -132,6 +140,7 @@ unsigned char *rlebuffertransformation(unsigned char *buffer, int sizebuffer){
 return rlebuffer;
 }
 
+/*Função que escreve no ficheiro rle, criado pela função createrlefile, os blocos resultantes da função rlebuffertransformation*/
 void rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs, char *filename){
     FILE *rle;
     if (flaginit) createrlefile(filename);
@@ -145,6 +154,7 @@ void rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs, char
 fclose (rle);
 }
 
+/*Função que dá a taxa de compressão do ficheiro original*/
 float split (char *filename, unsigned long block_size) {
     unsigned long long total;
     long long n_blocks;
@@ -206,6 +216,7 @@ fclose(exsistingFile);
 return taxacomp;
 }
 
+/*Função que devolve o número de blocos em que o ficheiro vai ser dividido*/
 long long number_of_blocks (char *filename, unsigned long block_size){
     FILE *fp;
     fp = fopen (filename, "rb");
