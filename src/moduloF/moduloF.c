@@ -1,3 +1,6 @@
+/*Daniela Carvalho a93224, Eduardo Magalhães a93301*/
+
+
 #include "moduloF.h"
 
 /*Função que cria o nome do ficheiro que contém as frequências, acrescentando .freq ao nome original do ficheiro*/
@@ -41,21 +44,21 @@ void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flagin
     orifreqs = fopen (filename, "ab");  
     fprintf(orifreqs, "%d@", sizebuffer);
     int i, j, counter=0, counterant;
-    for (j=0; j<256; j++){
-        for (i=0; i<sizebuffer; i++){
-            if (*(buffer+i) == j) counter++;
+    for (j=0; j<256; j++){ //Percorre os 256 caracteres ASCII
+        for (i=0; i<sizebuffer; i++){ //Percorre o bloco todo
+            if (*(buffer+i) == j) counter++; 
         }
     if (j==0){
        counterant = counter;
        fprintf(orifreqs, "%d;",counter);
     }
-    else if (counterant==counter){
+    else if (counterant==counter){ //Quando a frequência é igual à do caracter anterior escreve ";"
         if(j!=255) fprintf(orifreqs, ";");
         counterant=counter;
     }
     else{ 
         fprintf(orifreqs, "%d", counter);
-        if(j!=255) fprintf(orifreqs, ";");
+        if(j!=255) fprintf(orifreqs, ";"); //Se não for o último caracter ASCII põe ";" senão põe "@0"
         counterant=counter;
     }
     counter=0;
@@ -75,7 +78,7 @@ int simbcount(char *buffer, int sizebuffer){
             counter++;
             i++;
         }
-        if (counter >= 3)  simbs+=3;
+        if (counter >= 3)  simbs+=3; //Quando tem mais do que 3 símbolos iguais seguidos vai haver compressão ficando na forma  {0}1{símbolo}1{número_de_repetições}1, ficando apenas 3 símbolos no ficheiro rle
         else simbs += counter;
         counter=1;
 }
@@ -86,12 +89,12 @@ return simbs;
 int rlecheck(char *buffer, int sizebuffer, unsigned long long total){
     int ret = 0, simbs;
     float taxacomp;
-    if (total>=1024)
+    if (total>=1024) //Tamanho mínimo do ficheiro para haver compressão rle
     {
         simbs = simbcount (buffer, sizebuffer);
         taxacomp =  (sizebuffer-simbs);
         taxacomp /= sizebuffer;
-        if (taxacomp > 0.05) ret = 1;
+        if (taxacomp > 0.05) ret = 1; //Se a taxa de compressão do primeiro bloco for maior que 5% então vai haver compressão no ficheiro todo
     }
     else
     {
@@ -113,7 +116,7 @@ unsigned char *rlebuffertransformation(unsigned char *buffer, int sizebuffer){
             counter++;
             i++;
         }
-        if (counter >3 || c==0){ 
+        if (counter >3 || c==0){ //Quando tem mais do que 3 símbolos iguais seguidos ou é o caracter "0" põe-se no formato {0}1{símbolo}1{número_de_repetições}1,
                 unsigned char cont = counter;
                 *(rlebuffer + j)=zero;
                 *(rlebuffer + j+1)=c;
@@ -185,7 +188,7 @@ float split (char *filename, unsigned long block_size) {
             }*/
             unsigned char * buffer = (unsigned char *)malloc(chunkSize);
             bytesRead = fread( buffer, sizeof( unsigned char ), chunkSize, exsistingFile );
-            workSize -= bytesRead;
+            workSize -= bytesRead; //Retira ao tamanho total o tamanho do bloco lido, ficando o tamanho do ficheiro que ainda tem de ser lido
             if (flaginit && rlecheck(buffer, chunkSize, total)){
                     unsigned char *rlebuff = rlebuffertransformation(buffer, chunkSize);
                     int rlesimbs = simbcount(buffer, chunkSize);
