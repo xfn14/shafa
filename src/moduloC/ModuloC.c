@@ -14,24 +14,46 @@
  // CODE_MAX_SIZE = length_code_max/8 em excesso + 1
 
 int moduloC(int argc, char **argv){
+    clock_t start_time = clock();
     char *fileName = argv[1];
-}
+    if(argc == 4){
+        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(cod_file, fileName); strcat(cod_file, ".cod");
+        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
 
-//void moduloC(char *main_file){
-//    clock_t start_time = clock();
-//
-//    unsigned char shaf_file[MAX_FILENAME] = "", cod_file[MAX_FILENAME] = "";
-//    strcat(shaf_file, main_file); strcat(shaf_file, ".shaf");
-//    strcat(cod_file, main_file); strcat(cod_file, ".cod");
-//    FILE *in, *out;
-//    in = fopen(cod_file, "rb");
-//    out = fopen(shaf_file, "wb+");
-//
-//    int n_blocks = 2; // TODO
-//    int block_size[n_blocks]; // TODO
-//
-//    print_final_info(start_time, shaf_file);
-//}
+        codes_lists_struct codes_list;
+        initCodesLists(&codes_list);
+        readCodFile(cod_file, &codes_list);
+
+        D_Matrix_List out_bytes;
+        initMatrixList(&out_bytes);
+        binary_encoding(fileName, &codes_list, &out_bytes);
+
+        write_codes_in_file(shaf_file, &out_bytes);
+
+        print_final_info(start_time, shaf_file);
+
+    }else if(argc == 5){
+        strcat(fileName, ".rle");
+        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(cod_file, fileName); strcat(cod_file, ".cod");
+        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
+
+        codes_lists_struct codes_list;
+        initCodesLists(&codes_list);
+        readCodFile(cod_file, &codes_list);
+
+        D_Matrix_List out_bytes;
+        initMatrixList(&out_bytes);
+        binary_encoding(fileName, &codes_list, &out_bytes);
+
+        write_codes_in_file(shaf_file, &out_bytes);
+    }else{
+        return EXIT_FAILURE;
+    }
+}
 
 void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
     FILE *in;
@@ -206,7 +228,7 @@ int reverse(int n){
     return rev;
 }
 
-void print_final_info(clock_t start_time, char shaf_file[]){
+void print_final_info(clock_t start_time, char *shaf_file){
     clock_t stop_time = clock();
     double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
     time_t t = time(NULL);
@@ -217,7 +239,7 @@ void print_final_info(clock_t start_time, char shaf_file[]){
     printf("Tamanho antes/depois & taxa de compressão (bloco _): _/_\n"); // TODO
     printf("Taxa de compressão global: _%%\n"); // TODO
     printf("Tempo de execução do módulo: %fms\n", elapsed);
-    printf("Ficheiro gerado: %s\n", &shaf_file);
+    printf("Ficheiro gerado: %s\n", shaf_file);
 }
 
 //int main_example(){

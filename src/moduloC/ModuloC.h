@@ -1,5 +1,5 @@
-#ifndef MODULO_C_H
-#define MODULO_C_H
+#ifndef _MODULO_C_H_
+#define _MODULO_C_H_
 
 #include <stdio.h>
 #include <stdlib.h>

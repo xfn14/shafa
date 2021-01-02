@@ -1,5 +1,5 @@
-#ifndef C_ARRAY_H
-#define C_ARRAY_H
+#ifndef _C_ARRAY_H_
+#define _C_ARRAY_H_
 
 #include <stdio.h>
 #include "../moduloD/d_array.h"

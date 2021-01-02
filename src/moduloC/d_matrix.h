@@ -1,5 +1,5 @@
-#ifndef D_MATRIX_H
-#define D_MATRIX_H
+#ifndef _D_MATRIX_H_
+#define _D_MATRIX_H_
 
 #include <stdio.h>
 #include "../moduloD/d_array.h"
