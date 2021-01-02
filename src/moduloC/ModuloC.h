@@ -1,3 +1,6 @@
+#ifndef MODULO_C_H
+#define MODULO_C_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -9,10 +12,11 @@
 
 /**
  * @brief Codificação de um ficheiro de símbolos
- * 
- * @param[in] filename Nome do ficheiro a codificar
+ *
+ * @param[in] argc
+ * @param[in] argv
  */
-void moduloC(char *filename);
+int moduloC(int argc, char **argv);
 
 /**
  * @brief Shannon-Fano encoding
@@ -25,7 +29,7 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
 
 /**
  * @brief Writes the coded bytes on the .shaf file
- * 
+ *
  * @param[out] out_file
  * @param[in] coded_bytes
  */
@@ -57,8 +61,10 @@ int reverse(int n);
 
 /**
  * @brief Print no terminal a informação final de execução
- * 
+ *
  * @param[in] start_time Tempo de inicio de execução
  * @param[in] shaf_file Nome do ficheiro de output
  */
 void print_final_info(clock_t start_time, char *shaf_file);
+
+#endif

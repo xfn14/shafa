@@ -13,21 +13,25 @@
 
  // CODE_MAX_SIZE = length_code_max/8 em excesso + 1
 
-void moduloC(char *main_file){
-    clock_t start_time = clock();
-    
-    unsigned char shaf_file[MAX_FILENAME] = "", cod_file[MAX_FILENAME] = "";
-    strcat(shaf_file, main_file); strcat(shaf_file, ".shaf");
-    strcat(cod_file, main_file); strcat(cod_file, ".cod");
-    FILE *in, *out;
-    in = fopen(cod_file, "rb");
-    out = fopen(shaf_file, "wb+");
-
-    int n_blocks = 2; // TODO
-    int block_size[n_blocks]; // TODO
-
-    print_final_info(start_time, shaf_file);
+int moduloC(int argc, char **argv){
+    char *fileName = argv[1];
 }
+
+//void moduloC(char *main_file){
+//    clock_t start_time = clock();
+//
+//    unsigned char shaf_file[MAX_FILENAME] = "", cod_file[MAX_FILENAME] = "";
+//    strcat(shaf_file, main_file); strcat(shaf_file, ".shaf");
+//    strcat(cod_file, main_file); strcat(cod_file, ".cod");
+//    FILE *in, *out;
+//    in = fopen(cod_file, "rb");
+//    out = fopen(shaf_file, "wb+");
+//
+//    int n_blocks = 2; // TODO
+//    int block_size[n_blocks]; // TODO
+//
+//    print_final_info(start_time, shaf_file);
+//}
 
 void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
     FILE *in;
