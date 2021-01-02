@@ -65,6 +65,6 @@ int reverse(int n);
  * @param[in] start_time Tempo de inicio de execução
  * @param[in] shaf_file Nome do ficheiro de output
  */
-void print_final_info(clock_t start_time, char *shaf_file);
+void print_final_info(clock_t start_time, char *shaf_file, codes_lists_struct *code_list, D_Matrix_List *out_bytes);
 
 #endif

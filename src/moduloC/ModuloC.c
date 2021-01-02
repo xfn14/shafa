@@ -1,6 +1,6 @@
 #include "ModuloC.h"
 
-#define MAX_FILENAME 100
+#define MAX_FILENAME 200
 
 /**
  * @[número_de_blocos]
@@ -10,8 +10,6 @@
  * @[tamanho_último_bloco]
  * @(sequência_de_bits_resultante_da_codificação_SF_do_último_bloco)
  */
-
- // CODE_MAX_SIZE = length_code_max/8 em excesso + 1
 
 int moduloC(int argc, char **argv){
     clock_t start_time = clock();
@@ -32,9 +30,9 @@ int moduloC(int argc, char **argv){
 
         write_codes_in_file(shaf_file, &out_bytes);
 
-        print_final_info(start_time, shaf_file);
+        print_final_info(start_time, shaf_file, &codes_list, &out_bytes);
 
-    }else if(argc == 5){
+    }else if(argc == 5 && !strcmp("-r", argv[4])){ // TODO change to -c r
         strcat(fileName, ".rle");
         char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
         strcat(cod_file, fileName); strcat(cod_file, ".cod");
@@ -228,16 +226,23 @@ int reverse(int n){
     return rev;
 }
 
-void print_final_info(clock_t start_time, char *shaf_file){
+void print_final_info(clock_t start_time, char *shaf_file, codes_lists_struct *code_list, D_Matrix_List *out_bytes){
     clock_t stop_time = clock();
     double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     printf("André Vaz (a93221) e Rui Alves (a93252), MIEI/CD, %d-%02d-%02d\n", tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
     printf("Módulo: c (Codificação de um ficheiro de símbolos)\n");
-    printf("Número de blocos: _\n"); // TODO
-    printf("Tamanho antes/depois & taxa de compressão (bloco _): _/_\n"); // TODO
-    printf("Taxa de compressão global: _%%\n"); // TODO
+    printf("Número de blocos: %d\n", code_list->len);
+    int initTotal = 0;
+    int endTotal = 0;
+    for(int i = 0; i < code_list->len; i++){
+        printf("Tamanho antes/depois & taxa de compressão (bloco %d): %ld/%d\n", i+1, code_list->lists[i].block_size, out_bytes->list[i].len);
+        initTotal += (int) code_list->lists[i].block_size;
+        endTotal += out_bytes->list[i].len;
+    }
+    int compress = endTotal / initTotal * 100;
+    printf("Taxa de compressão global: %d%%\n", compress);
     printf("Tempo de execução do módulo: %fms\n", elapsed);
     printf("Ficheiro gerado: %s\n", shaf_file);
 }
