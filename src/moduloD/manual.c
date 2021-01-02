@@ -57,7 +57,8 @@ void help_menu (){
     do_frase("Creates a new file that does rle compression to the file",COR_RESET,0);
     do_frase("Creates a file .freq with the number of frequences",COR_RESET,0);
     n_lines(1);
-    do_frase ("e.g.: shafa example.txt -m t",COR_RESET,0);
+    do_frase ("e.g.",SUB_TIT,1);
+    do_frase ("shafa example.txt -m f",COR_RESET,0);
     do_frase("OUTPUT: example.txt.rle and example.txt.freq",COR_RESET,0);
     print_line();
     do_frase ("-t:",SUB_TIT,1);
@@ -65,13 +66,14 @@ void help_menu (){
     do_frase("coding",COR_RESET,0); 
     n_lines(1);
     do_frase ("e.g.",SUB_TIT,1); 
-    do_frase ("shafa example.txt.rle.freq -m f",COR_RESET,0);
+    do_frase ("shafa example.txt.rle.freq -m t",COR_RESET,0);
     do_frase("OUTPUT: example.txt.rle.cod",COR_RESET,0);
     print_line();
     do_frase ("-c:",SUB_TIT,1);
     do_frase("Uses the codes from cod file to create the compressed file ",COR_RESET,0);
     n_lines(1);
-    do_frase ("e.g.: shafa example.txt.rle -m t",COR_RESET,0);
+    do_frase ("e.g.",SUB_TIT,1);
+    do_frase ("shafa example.txt.rle -m c",COR_RESET,0);
     do_frase("OUTPUT: example.txt.rle.shaf",COR_RESET,0);
     print_line();
     do_frase ("-d:",SUB_TIT,1);
@@ -84,7 +86,8 @@ void help_menu (){
     do_frase("-s:",SUB_TIT,2);
     do_frase("Does the shaf decompression",COR_RESET,1);
     n_lines(1);
-    do_frase ("e.g.: shafa example.txt.rle.shaf -m t",COR_RESET,0);
+    do_frase ("e.g.",SUB_TIT,1);
+    do_frase ("shafa example.txt.rle.shaf -m d",COR_RESET,0);
     do_frase("OUTPUT: example.txt.rle and example.txt",COR_RESET,0);
     print_line();
     do_frase ("AUTHORS",TIT,1);
