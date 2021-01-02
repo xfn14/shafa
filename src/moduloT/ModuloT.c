@@ -1,113 +1,125 @@
 #include "ModuloT.h"
 
 int moduloT (char *filename) {
-    LISTA l = listaVazia();
-    endPar *arPares = arParVazio(CHARS);
-    endPar *SF = arParVazio(CHARS);
-    int numBlocos,zeroAfter;
-    // Abrir o file de input
+    // Começa a contar o tempo
+    clock_t start = clock ();
+    // Abrir os ficheiros de input e output e as respetivas que gyuardam os dados em memoria 
     FILE *input = fopen (filename,"r");
-    if (input == NULL) return 1;
-    // Criar e abrir o file de output
-    char *outName = addCodFile (filename);
+    if (input == NULL) return 1; // Caso não consiga abrir o file de input
+    char outName[strlen(filename)];
+    strcpy (outName,filename);
+    addCodFile (outName);
     FILE *output = fopen (outName,"w");
-    free (outName);
-    // Ler se o File está comprimido ou não
-    fgetc (input);
-    input = writeNum(input,output,NULL,l);
-    // Ler nº blocos
-    input = writeNum(input,output,&numBlocos,l);
-    // For pra ler os blocos e escrever
+    if (output == NULL) return 2; // Caso não consiga abrir o file de ouput
+    char *fileCont = getArrayFile (input);// String do input
+    LISTA outputCods = listaVazia();// String para o output 
+    setSize (outputCods,strlen(fileCont));
+    // Inicializar oa variaveis que seram usadas pra trabalhar os dados
+    endPar *arPares = arParVazio(CHARS);// [(END1),(END2),...] where END->FST = N do Char e END->SND = FREQ do Char em FST
+    LISTA SF[CHARS];// [(CHAR Nº0,CODIGO SF),(CHAR Nº1,CODIGO SF),...]
+    for(int i = 0;i < CHARS; i++) SF[i] = listaVazia();
+    int numBlocos, zeroAfter, readFileF = 0, readFileL = 3; //Variaveis de controlo
+    // Obtem o n de blocos e copia do input pro output tudo ate ao tamanho do 1º bloco
+    readFileL = getNumL (fileCont,readFileL,&numBlocos);
+    copyStrLista (outputCods,fileCont,readFileF,readFileL);
+    readFileF = readFileL;
+    // blocosSize guarda os tamanhos de todos os blocos
+    int blocosSize [numBlocos]; 
     for(int i = 0; i < numBlocos; i++){
-        //Tamanho do bloco
-        input = writeNum(input,output,NULL,l);
-        //Passar o bloco pra array onde arPares[n] = end -> (Nº de Simb ,Freq) pra depois ordenar
-        // g[] = [121323124,32141412] = 121323124 -> (1,2) = 32141412 -> (2,3)
-        input = tilAt(input,l);
-        getArPares (arPares,l);
-        //Ordenar po ordem dercresente
-        zeroAfter = decresArray (arPares);
-        cpPar_Snd (arPares,SF,CHARS,1);
-        //Shanon fanon
+        // Guarda o tamanho do bloco i + 1 no blocosSize e copia o valor pro output
+        readFileL = getNumL (fileCont,readFileL,blocosSize + i);
+        copyStrLista (outputCods,fileCont,readFileF,readFileL);
+        readFileF = readFileL;
+        // Cria o array de pares de freqs
+        readFileL = getArPares (arPares,fileCont,readFileL);
+        readFileF = readFileL;
+        // Coloca o array por ordem decresente e prepara SF pra guardar os codigos
+        zeroAfter = decresArray (arPares); // zeroAfter guarda a quantidade de codigos pra calcular no SF
+        ordSF(SF,arPares);
+        //  Calcular os codigos
         calcularSF (arPares, SF, 0, zeroAfter);
-        //reordenar o array array[n] = codigo shanon fanon desse numero
-        //escrever no file
-        output = printArParFile (SF, output);
-        resetLista (l);
+        //  Escrever os codigos no output 
+        addSFtoOut (SF,outputCods);
+        addToLista (outputCods,'@'); 
+        // Da reset a lista pra poder ser usada 
+        for (int g = 0; g < CHARS; g++) resetLista (SF[g]);
     }
-    fprintf (output,"@0");
-    freeLista (l);
+    // Escreve o output no Ficheiro de output 
+    copyStrLista (outputCods,"0",0,2);
+    fprintf (output,"%s",outputCods -> lista);
+    // Liberta a memoria alocada 
+    freeLista (outputCods);
     freeArPares (arPares,CHARS);
-    freeArPares (SF,CHARS);
+    for (int g = 0; g < CHARS; g++) freeLista (SF[g]);
+    fclose (input);
+    fclose (output);
+    // Termina o relogio e escreve as informação relativas ao execução  
+    clock_t end = clock();
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    printf ("Pedro Sousa A93225, Alexandre Soares A93267, %d/%d/%d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+    printf ("Modulo: T\n");
+    printf ("Numero de Blocos: %d\n",numBlocos);
+    printf ("Tamanho dos Blocos: %d",blocosSize [0]);
+    for(int i = 1; i < numBlocos; i++) printf ("/%d",blocosSize[i]);
+    putchar ('\n');
+    printf ("Tempo de execucao: %f ms\n" , (double)(end - start) / CLOCKS_PER_SEC * 1000);
+    printf ("Ficheiro gerado: %s\n", outName);
     return 0;
 }
+//---------------------------------------------------------------------------------
+// Funções que tem como objetivo ler a abrir ficheiros. 
 
-FILE *tilAt (FILE *file,LISTA l){
-    int temp = fgetc(file);
-    while (temp != 64 && temp >= EOF){
-        addToLista (l,(char) (temp));
-        temp = fgetc (file);
-    } 
-    return file;
+// Cria o nome do ficheior de escrita usando o nome do ficheiro aberto
+void addCodFile (char *name){
+    char cod[] = "cod";
+    int length = strlen (name);
+    strcpy (name + (length - 4),cod);
 }
 
-char *addCodFile (char *name){
-    int length = strlen (name) + 7;
-    char *new = malloc(length * sizeof(char));
-    strcpy (new,name);
-    strcat (new,".cod");
-    return new;
+// Devolve um array , onde está guardado o conteudo do ficheiro 
+char *getArrayFile (FILE *input){
+    long int size = 0;
+    fseek(input, 0, SEEK_END);
+    size = ftell (input);
+    char *result = (char *) (malloc (size + 1));
+    fseek(input, 0, SEEK_SET);
+    fgets(result, size+1, input);
+    return (result);
 }
 
-void writeOnFile (LISTA l,FILE *file){ 
-    fputc('@',file);
-    for(int i = 0, last = l -> last; i < last; i++) fputc (l->lista[i],file);
-    l -> last = 0;
-}
+//---------------------------------------------------------------------------------
 
-int getNumLL (char *lista,int fst,int lst){
-    int result = 0;
-    for (int i = fst;i <= lst; i++ ){ 
-    result = result * 10 + ((lista[fst]) - '0');
-    } 
-    return result;
-
-}
-
-FILE *writeNum(FILE *input,FILE *output,int *ret,LISTA l){
-    input = tilAt(input,l);
-    if(ret != NULL) *ret = getNumLL (l->lista, 0, (l->last)-1);
-    writeOnFile (l,output);
-    return input;
-}
-
-// WIP
-void getArPares (endPar *arPares, LISTA l){
-    int* num = malloc(sizeof(int));
-    int ind = entrePV(l,0, num);
-    int last = *num; 
-    setPar (arPares[0], 0, *num);
-    for (int i = 1; i < CHARS; i++){
-        ind = entrePV(l, ind, num);
-        if (*num == -1){
-            setPar(arPares[i],i,last);
-        }else {
-            setPar(arPares[i],i,*num);
-            last = *num;
-        }
-    }
-    free (num);
-}
-
-int entrePV (LISTA l, int start, int *num){
+// Função para retirar Int numa string 
+int getNumL (char *lista,int start, int *num){
     int i, result = 0;
-    for (i = start; l->lista[i] != ';' && i < l ->last; i ++) result = result * 10 + (l->lista[i] - 48);
-    if (i == start)*num = -1;
+    for (i = start; isdigit(lista[i]); i ++) result = result * 10 + (lista[i] - 48);
+    if (i == start) *num = -1;
     else *num = result;
     return ++i;
 }
+//---------------------------------------------------------------------------------
+// Funções que crião e manipulão Arrays de Pares  
 
-// Para testar
+// Função que gera um array de pares a partir do input  
+int getArPares (endPar *arPares,char* l,int filePoint){
+    int num,last;
+    int ind = getNumL (l,filePoint,&num);
+    setPar (arPares[0], 0, num);
+    last = num;
+    for (int i = 1; i < CHARS; i++){
+        ind = getNumL (l,ind,&num);
+        if (num == -1){
+            setPar(arPares[i],i,last);
+        }else {
+            setPar(arPares[i],i,num);
+            last = num;
+        }
+    }
+    return ind;
+}
+
+// Ordena um array por ordem decresente 
 int decresArray (endPar *arPares){
     int maior = 0,ind = 0,result = 0;
     for (int i = 0; i < CHARS; i++){
@@ -124,12 +136,30 @@ int decresArray (endPar *arPares){
     return result - 1;
 }
 
-int somaArray (endPar *arrPares,int i,int j) {
-    int soma = 0;
-    for(; i < j; i++) soma += (arrPares[i] -> snd);
-    return soma;
+// Cria um array de strings dinamicas que vai conter os codigos SF a partir do
+//  arrray de pares gerado das freqs 
+void ordSF (LISTA SF[],endPar* Par){
+    for (int i = 0; i < CHARS; i++){
+        addToLista(SF[i],Par[i] -> fst);    
+    }
 }
+//---------------------------------------------------------------------------------
 
+// Funções pra gerar os codigos SF
+
+// Função principal que calcula os codigos SF
+void calcularSF (endPar *arrPares,LISTA *SF,int i, int j){
+    int div;
+    if (i != j){
+        div = melhorDiv (arrPares,i,j);
+        addBit (SF,i,div,'0');
+        addBit (SF,div+1,j,'1');
+        calcularSF (arrPares,SF,i,div);
+        calcularSF (arrPares,SF,div+1,j);
+    }
+} 
+
+// Função que serve pra determinar a melhor divisão
 int melhorDiv (endPar *arrPares,int i,int j){
     int soma = 0, ind;
     int mtotal = (somaArray (arrPares,i,j)) / 2;
@@ -139,54 +169,34 @@ int melhorDiv (endPar *arrPares,int i,int j){
     return ind;
 }
 
-void addBit (endPar *SF,int i,int j,int b){
+// Função que devolve a soma os valores das freq nos pares
+// entre dois pontos expecificados 
+int somaArray (endPar *arrPares,int i,int j) {
+    int soma = 0;
+    for(; i < j; i++) soma += (arrPares[i] -> snd);
+    return soma;
+}
+
+// Adiciona um bit aos codigos
+void addBit (LISTA *SF,int i,int j,char b){
     for (; i <= j; i++){
-        (SF [i] -> snd) = (SF [i] -> snd) * 10 + b;
+        addToLista (SF[i],b);
     }
 }
+//---------------------------------------------------------------------------------
 
-void calcularSF (endPar *arrPares,endPar *SF,int i, int j){
-    int div;
-    if (i != j){
-        div = melhorDiv (arrPares,i,j);
-        addBit (SF,i,div,0);
-        addBit (SF,div+1,j,1);
-        calcularSF (arrPares,SF,i,div);
-        calcularSF (arrPares,SF,div+1,j);
-    }
-} 
-
-FILE *printArParFile (endPar *SF,FILE *output){
-    int last = CHARS - 1;
-    int simb = 0;
-    char string[100];
-    putc('@',output);
-    for (int i = 0;i <= last; i++){
-        if (SF[i] -> fst == simb){
-            if (SF[i] -> snd != 1){
-                numToString (SF[i] -> snd,string);
-                fprintf(output,"%s",string);
-            }
-            switchPares (SF,i,last);
-            putc (';', output);
-            simb ++; last--; i = -1;
+// Função que passa os codigos para a string de output
+// e poê - os por ordem   
+void addSFtoOut (LISTA SF[],LISTA out){
+    int simb = 0,last = CHARS - 1;
+    LISTA temp = SF [0];
+    for (int i = 0; i <= last; i++){
+        temp = SF [i];
+        if (temp -> lista [0] == simb){
+            for(int g = 1; g < temp -> last; g ++) addToLista (out,temp->lista[g]);
+            switchLista (SF,i,last);
+            if (last != 0) addToLista (out,';');
+            simb ++;last--;i = -1;
         }
-    }  
-    return output;
-}
-
-void numToString (int num,char *string){
-    int size = sizeNum (num);
-    string[size - 1] = '\0';
-    for (int i = size - 2;i >= 0; i --){
-        string[i] = '0' + (num % 10);
-        num = num / 10;
     }
-}
-
-int sizeNum (int num){
-    int i;
-    for (i = 0; num  >= 10; i++)num = num / 10;    
-    i++;
-    return i;
 }

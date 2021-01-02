@@ -12,7 +12,7 @@
 typedef struct LL {
     int size;
     int last;
-    char *lista;
+    unsigned char *lista;
 } *LISTA;
 
 /**
@@ -38,3 +38,7 @@ void setSize(LISTA l, int size);
 void resetLista (LISTA l);
 
 void freeLista (LISTA l);
+
+void copyStrLista (LISTA outputCods, char *fileCont, int fst, int lst);
+
+void switchLista (LISTA SF[],int i,int last);

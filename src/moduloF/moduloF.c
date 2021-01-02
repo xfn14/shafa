@@ -1,23 +1,28 @@
 #include "moduloF.h"
 
+/*Esta função cria um array com 255 posições e inicializa-o com todas as posiçoes a 0*/
+/*A funçao será usada mais à frente pela função freqs para guardar as frequências de cada um dos 255 códigos ASCII*/
 int *arrayazeros(){
-    int *freqs = malloc (255* sizeof(int));
-    for (int i = 0; i < 256; i++)
+    int *freqs = malloc (255* sizeof(int)); //Cria o array com 255 posições
+    for (int i = 0; i < 256; i++) //Percorrer as 255 posções do array
     {
-        *(freqs+i) = 0;
+        *(freqs+i) = 0; //Inicializa as posições a 0
     } 
-return freqs;
+return freqs; //Devolve o array com 0 em todas as posições
 }
 
+/*Função que cria um array com tantas posições quantas o número de blocos do ficheiro rle (argumento passado à função) e inicializa cada uma dessas posições a zero*/
+/*Esta função é usada para guardar os tamanhos de cada bloco do ficheiro rle, para mais tarde dar printf na função moduloF*/
 int *array_rle_blocksize_zeros(long long n_blocks){
-    int *rle = malloc(n_blocks*sizeof(int));
-    for (int i = 0; i < n_blocks; i++)
+    int *rle = malloc(n_blocks*sizeof(int)); //Cria um array com n_blocks posições
+    for (int i = 0; i < n_blocks; i++) //Percorre as n_blocks posições
     {
-        *(rle+i) = 0;
+        *(rle+i) = 0; //Inicializa as posições a 0
     }
-return rle; 
+return rle; //Devolve o array com 0 em todas as posições
 }
 
+/*Acrescenta ".freq" no final do nome do ficheiro de frequências*/
 char *dotfreq(char *filename){
     int length = strlen(filename) *2;
     char *newfilename = malloc(length* sizeof(char));
@@ -26,6 +31,7 @@ char *dotfreq(char *filename){
 return newfilename;
 }
 
+/*Acrescenta ".rle" no final do nome do ficheiro rle*/
 char *dotrle(char *filename){
     int length = strlen(filename) *2;
     char *newfilename = malloc(length* sizeof(char));
@@ -34,75 +40,81 @@ char *dotrle(char *filename){
 return newfilename;
 }
 
+/*Cria um ficheiro de frequências e escreve lá a frequência de cada um dos códigos ASCII no ficheiro*/
 void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, char *filename, int flagend, int flagoriginal){
     FILE *fp;
-    if (flaginit){
+    if (flaginit){ //Esta flag permite-nos saber se já existia algum ficheiro com o mesmo nome, se sim então vai abri-lo, apagar o que lá havia e começar a escrever no ínicio do ficheiro
         fp = fopen (filename, "wb");
-        if (flagoriginal) fprintf(fp, "@N@%lld@", n_blocks);
-        else fprintf (fp, "@R@%lld@", n_blocks);
+        if (flagoriginal) fprintf(fp, "@N@%lld@", n_blocks); //Esta flag diz-nos se vamos criar o ficheiro das frequências referente ao ficheiro orginal (filename.freq) ou referente ao ficheiro rle (filename.rle.freq)
+        else fprintf (fp, "@R@%lld@", n_blocks); //Isto acontece quando a flagorinal é igual a 0 e portanto o ficheiro das frequências é referente ao ficheiro rle
     }
-    else fp = fopen (filename, "ab");  
+    else fp = fopen (filename, "ab"); //Vimos para esta condição quando a flaginit é 0 o que significa que já existia um ficheiro com este nome
     fprintf(fp, "%d@", sizebuffer);
+
     int i, z, counterant, *freqs = arrayazeros();
         for (i=0; i<sizebuffer; i++){
             z = *(buffer+i);
             *(freqs+z)+=1;
         }
-    for ( int y = 0; y<256; y++)
+    for ( int y = 0; y<256; y++) //Neste ciclo percorremos o array onde estão guardadas as frequências para as imprimir no ficheiro freq
     {
         int counter = *(freqs+y);
-        if (y==0){
-            counterant = counter;
+        if (y==0){ //Se estiver na primeira posição do array vai apenas imprimir o que lá está seguido dum ";"
+            counterant = counter; //Guarda o valor que se encontra nessa posição na variável couterant
             fprintf(fp, "%d;",*(freqs+y));
         }
-        else if (counterant==counter){
+        else if (counterant==counter){ //Se as duas frequências consecutivas forem iguais então escreve apenas um ";"
                  if(y!=255) fprintf(fp, ";");
-                 counterant=counter;
+                 counterant=counter; //Atualiza o valor de counterant
         }
-        else{ 
+        else{ //Se nenhuma das condições anteriores se verificar exreve no ficheiro o valor que se encontra na posição y do array freqs
             fprintf(fp, "%d", counter);
-            if(y!=255) fprintf(fp, ";");
-            counterant=counter;
+            if(y!=255) fprintf(fp, ";"); //Se não se encontrar na última posição do array então vai escrever um ";"
+            counterant=counter; //Atualiza a variável counterant
     }
     }
-    fprintf(fp, "@");
-    if(flagend) fprintf(fp, "0");
-    fclose(fp);
+    fprintf(fp, "@"); //Escreve no ficheiro um "@"
+    if(flagend) fprintf(fp, "0"); //Caso a flangend seja verdadeira, o que signfica que o ficheiro original chegou aoo fim, escreve no ficheiro freq um "0"
+    fclose(fp); //Fecha o ficheiro freq
 }
 
+/*Esta função devolve o número de símbolos do ficheiro rle*/
+/*Esta função é usada nas funçôes rlecheck e split*/
 int simbcount(unsigned char *buffer, int sizebuffer){
     int i, counter=1, simbs=0;
     unsigned char c;
-    for (i = 0; i<sizebuffer; i++)
+    for (i = 0; i<sizebuffer; i++) //Percorre o bloco que está a ser analisado
     {
-        c= *((buffer)+i);
-        while (*((buffer)+i) == *((buffer)+i+1))
+        c= *((buffer)+i); //É atribuido à variável c o valor que se encontra na posição i do buffer
+        while (*((buffer)+i) == *((buffer)+i+1)) //Enquanto os valores nas posições consecutivas do array são iguais o counter vai aumentando
         {
-            counter++;
+            counter++; //A variável counter armazena o número de símbolos iguais que se encontram seguidos
             i++;
         }
-        if (counter>255){
-            while (counter/255 > 0){
-                simbs+=3;
-                counter-=255;
+        if (counter>255){ //Quando a variável counter tiver um valor superior a 255 (o máximo que se pode comprimir duma vez)  
+            while (counter/255 > 0){ //Dividimos por 255 para ver quantas vezes temo e realizar o ciclo, enquanto for maior que 255 temos sempre que repetir
+                simbs+=3; //Por cada 255 símbolos no ficheiro rle ficam apenas 3 (por causa deste formato {0}1{símbolo}1{número_de_repetições}1)
+                counter-=255; 
             }
         }
-        if (counter > 3 || c==0)  simbs+=3;
-        else simbs += counter;
-        counter=1;
+        if (counter > 3 || c==0)  simbs+=3; //Se o counter for maior que 3 (e menor que 255) ou se o caracter for o caracter nulo então passa-se para o formato {0}1{símbolo}1{número_de_repetições}1
+        else simbs += counter; //Se não se verificar nenhuma das condições anteriores então o número de símbolos é igual ao counter
+        counter=1; //O counter volta a ser 1 para analisar o próximo bloco
 }
-return simbs;
+return simbs; 
 }
 
+/*Verifica se é ou não para gerar ficheiro rle consoante a taxa de compressão ou se é para forçar a compressão*/
+/*Esta função é usada na função split mais abaixo*/
 int rlecheck(unsigned char *buffer, int sizebuffer, unsigned long long total, int forcecompression){
     int ret = 0, simbs;
     float taxacomp;
-    if (total>=1024)
+    if (total>=1024) //Se o total (tamanho total do ficheiro) for inferior a 1024 bytes então não há compressão pois o ficheiro é demasiado pequeno
     {
-        simbs = simbcount (buffer, sizebuffer);
-        taxacomp =  (sizebuffer-simbs);
-        taxacomp /= sizebuffer;
-        if (taxacomp > 0.05 || forcecompression) ret = 1;
+        simbs = simbcount (buffer, sizebuffer); //Calcula o número de símbolos no primeiro se houver compressão
+        taxacomp =  (sizebuffer-simbs); //Ao tamanho do primeiro bloco do ficheiro original tiramos o valor de simbs calculado na linha anterior
+        taxacomp /= sizebuffer; //Dividimos o valor calculado na linha acima pelo tamanho do primeiro bloco do ficheiro original e temos a taxa de compressão
+        if (taxacomp > 0.05 || forcecompression) ret = 1; //Se a taxa de compressão for superior a 0.05 ou o utilizador decidir forçar a compressão a função irá devolver 1 
         else printf ("Rle compression was not done because the compression rate of the first block < 0.05\n\n");
     }
     else
@@ -112,6 +124,8 @@ int rlecheck(unsigned char *buffer, int sizebuffer, unsigned long long total, in
 return ret;
 }
 
+/*Esta função comprime o que estava no ficheiro original e devolve isso num buffer*/
+/*A função é chamada na função split*/
 unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *filename){
     FILE *fp;
     if (flaginit) fp = fopen (filename, "wb");
@@ -285,3 +299,4 @@ int main(){
     moduloF(filename, block_size, 1);
 return 1;
 }*/
+
