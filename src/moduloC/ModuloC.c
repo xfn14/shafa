@@ -19,6 +19,7 @@ int moduloC(int argc, char **argv){
         strcat(cod_file, fileName); strcat(cod_file, ".cod");
         char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
         strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
+//        strcat(shaf_file, "shafa.out");
 
         codes_lists_struct codes_list;
         initCodesLists(&codes_list);
@@ -51,12 +52,13 @@ int moduloC(int argc, char **argv){
     }else{
         return EXIT_FAILURE;
     }
+    return EXIT_SUCCESS;
 }
 
 void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
     FILE *in;
     in = fopen(in_file, "rb");
-    fseek(in, 0, SEEK_SET);
+    fseek(in, 0L, SEEK_SET);
 
     for (int i = 0; i < codes_lists->len; i++) {
         D_Matrix coded_bytes; // bytes for block
@@ -241,7 +243,7 @@ void print_final_info(clock_t start_time, char *shaf_file, codes_lists_struct *c
         initTotal += (int) code_list->lists[i].block_size;
         endTotal += out_bytes->list[i].len;
     }
-    int compress = endTotal / initTotal * 100;
+    int compress = ((double) endTotal / initTotal) * 100;
     printf("Taxa de compressão global: %d%%\n", compress);
     printf("Tempo de execução do módulo: %fms\n", elapsed);
     printf("Ficheiro gerado: %s\n", shaf_file);

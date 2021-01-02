@@ -1,6 +1,3 @@
-#ifndef _MODULO_C_H_
-#define _MODULO_C_H_
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -9,6 +6,9 @@
 #include "../moduloD/d_array.h"
 #include "c_array.h"
 #include "d_matrix.h"
+
+#ifndef _MODULO_C_H_
+#define _MODULO_C_H_
 
 /**
  * @brief Codificação de um ficheiro de símbolos
