@@ -1,9 +1,9 @@
 #include "auxiliar.h"
 
 int fsize(FILE *fp) {
-    fseek(fp, 0, SEEK_END);     // seek to end of file
-    int file_size = ftell(fp);  // get current file pointer
-    fseek(fp, 0, SEEK_SET);     // seek back to beginning of file
+    fseek(fp, 0, SEEK_END);    
+    int file_size = ftell(fp);  
+    fseek(fp, 0, SEEK_SET);     
     return file_size;
 }
 
@@ -21,14 +21,13 @@ int skip(int index, int stop, unsigned char *buffer) {
     return index;
 }
 
-int do_size(unsigned char *buffer, int *array) {
-    int res = 0, index = array[0], i, size;
-    for (size = 0; buffer[index + size] != '@'; size++)
-        ;
-    for (i = 0; buffer[index + i] != '@'; i++) {
-        res += pow(10, size - i - 1) * (buffer[index + i] - '0');
+size_t do_size(unsigned char *buffer, int *index) {
+    int res = 0,i, size;
+    for (size = 0; buffer[*index + size] != '@'; size++);
+    for (i = 0; buffer[*index + i] != '@'; i++) {
+        res += pow(10, size - i - 1) * (buffer[*index + i] - '0');
     }
-    array[0] += i + 1;
+    *index += i + 1;
     return res;
 }
 
@@ -47,15 +46,52 @@ void get_filenames(char *filename, char *cod_file, char *output_file) {
     strcat(cod_file, ".cod");
 }
 
-void error_messages(int n) {
+void error_messages(int n,char *str) {
+    printf(COR_B_VERMELHO"ERROR:"COR_RESET);
     switch (n) {
+        case 0:
+            printf(" Can't read the file: \"%s\"\nSee --help for more information\n",str);
+            break;
         case 1:
-            printf("Argument needed.\nCorrect sintax: shafa m d <file>\n");
+            printf(" Incorrect format\nSee --help for more information\n");
             break;
         case 2:
-            printf("Too many arguments\n");
+            printf(" Can't find %s file\n",str);
             break;
         default:
             break;
     }
+}
+
+
+void output_text (size_t nr_blocks,size_t* input_array,size_t* output_array,char* output_file,char* rle_file, double time_spent,int do_rle, struct tm tm){
+    printf("José Diogo,a93251, e António Fernandes, a93312, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+    printf("Módulo: d (descodificação dum ficheiro shaf)\n");
+    printf("Número de blocos:%zu\n", nr_blocks);
+    for (size_t i = 0; i < nr_blocks; i++)
+        printf("Tamanho antes/depois do ficheiro gerado (bloco %zu):%zu/%zu\n", i +1, input_array[i], output_array[i]);
+    printf("Tempo de execução do módulo (milissegundos):%f milissegundos\n", time_spent * 1000);
+    if (!do_rle) printf("Ficheiro gerado: %s\n", output_file);
+    else printf("Ficheiros gerados: %s e %s\n",output_file,rle_file);
+} 
+
+int lenHelper(size_t x) {
+    if (x >= 1000000000) return 10;
+    if (x >= 100000000)  return 9;
+    if (x >= 10000000)   return 8;
+    if (x >= 1000000)    return 7;
+    if (x >= 100000)     return 6;
+    if (x >= 10000)      return 5;
+    if (x >= 1000)       return 4;
+    if (x >= 100)        return 3;
+    if (x >= 10)         return 2;
+    return 1;
+}
+
+int last_point(char *name, int size) {
+    int index = 0;
+    for (int i = 0; i < size; i++) {
+        if (name[i] == '.') index = i;
+    }
+    return index;
 }
