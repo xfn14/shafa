@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
-//#include "../utils/fsize.h"
-#include "fsize.h"
+#include "../utils/fsize.h"
+//#include "fsize.h"
 
 char *dotfreq(char *filename);
 char *dotrle(char *filename);
@@ -15,7 +15,7 @@ void createfreqfile(long long n_blocks, char *filename, int flagoriginal);
 void createrlefile(char *filename);
 void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, int onlyoneblock, char *filename, int flagoriginal);
 int simbcount(char *buffer, int sizebuffer);
-int rlecheck(char *buffer, int sizebuffer);
+int rlecheck(char *buffer, int sizebuffer, unsigned long long total);
 unsigned char *rlebuffertransformation(unsigned char *buffer, int sizebuffer);
 void rlecompressing(char *buffer , int flaginit, int sizebuffer, int simbs, char *filename);
 float split (char *filename, unsigned long block_size);

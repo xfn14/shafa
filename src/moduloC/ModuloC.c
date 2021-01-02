@@ -1,6 +1,6 @@
 #include "ModuloC.h"
 
-#define MAX_FILENAME 100
+#define MAX_FILENAME 200
 
 /**
  * @[número_de_blocos]
@@ -11,22 +11,46 @@
  * @(sequência_de_bits_resultante_da_codificação_SF_do_último_bloco)
  */
 
- // CODE_MAX_SIZE = length_code_max/8 em excesso + 1
-
-void moduloC(char *main_file){
+int moduloC(int argc, char **argv){
     clock_t start_time = clock();
-    
-    unsigned char shaf_file[MAX_FILENAME] = "", cod_file[MAX_FILENAME] = "";
-    strcat(shaf_file, main_file); strcat(shaf_file, ".shaf");
-    strcat(cod_file, main_file); strcat(cod_file, ".cod");
-    FILE *in, *out;
-    in = fopen(cod_file, "rb");
-    out = fopen(shaf_file, "wb+");
+    char *fileName = argv[1];
+    if(argc == 4){
+        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(cod_file, fileName); strcat(cod_file, ".cod");
+        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
 
-    int n_blocks = 2; // TODO
-    int block_size[n_blocks]; // TODO
+        codes_lists_struct codes_list;
+        initCodesLists(&codes_list);
+        readCodFile(cod_file, &codes_list);
 
-    print_final_info(start_time, shaf_file);
+        D_Matrix_List out_bytes;
+        initMatrixList(&out_bytes);
+        binary_encoding(fileName, &codes_list, &out_bytes);
+
+        write_codes_in_file(shaf_file, &out_bytes);
+
+        print_final_info(start_time, shaf_file, &codes_list, &out_bytes);
+
+    }else if(argc == 5 && !strcmp("-r", argv[4])){ // TODO change to -c r
+        strcat(fileName, ".rle");
+        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(cod_file, fileName); strcat(cod_file, ".cod");
+        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
+        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
+
+        codes_lists_struct codes_list;
+        initCodesLists(&codes_list);
+        readCodFile(cod_file, &codes_list);
+
+        D_Matrix_List out_bytes;
+        initMatrixList(&out_bytes);
+        binary_encoding(fileName, &codes_list, &out_bytes);
+
+        write_codes_in_file(shaf_file, &out_bytes);
+    }else{
+        return EXIT_FAILURE;
+    }
 }
 
 void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
@@ -59,6 +83,10 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
                 or_opp(&crt_byte, &code_to_use.code, 1);
             }
             offset = code_to_use.next;
+
+            if(j == crt_code_list.block_size-1){
+                addLineMatrix(&coded_bytes, crt_byte);
+            }
         }
         insertMatrixInList(out_bytes, coded_bytes);
     }
@@ -67,7 +95,7 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
 
 unsigned char byte_to_char(D_Array *arr){
     int crt = 0, res = 0;
-    for(int i = arr->used; i > 0; i--){
+    for(int i = arr->used-1; i >= 0; i--){
         res += (int) pow(2, crt) * (arr->array[i] == '1' ? 1 : 0);
         crt++;
     }
@@ -79,6 +107,7 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
     out = fopen(out_file, "wb+");
 
     fprintf(out, "@%d@", coded_bytes->len);
+
     for(int i = 0; i < coded_bytes->len; i++){
         D_Matrix crt_matrix = coded_bytes->list[i];
         fprintf(out, "%d@", crt_matrix.len);
@@ -87,7 +116,7 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
             crt_byte = byte_to_char(&crt_matrix.arr[j]);
             fprintf(out, "%c", crt_byte);
         }
-        fprintf(out, "@");
+        if(i != coded_bytes->len-1) fprintf(out, "@");
     }
 
     fclose(out);
@@ -197,16 +226,39 @@ int reverse(int n){
     return rev;
 }
 
-void print_final_info(clock_t start_time, char shaf_file[]){
+void print_final_info(clock_t start_time, char *shaf_file, codes_lists_struct *code_list, D_Matrix_List *out_bytes){
     clock_t stop_time = clock();
     double elapsed = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     printf("André Vaz (a93221) e Rui Alves (a93252), MIEI/CD, %d-%02d-%02d\n", tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
     printf("Módulo: c (Codificação de um ficheiro de símbolos)\n");
-    printf("Número de blocos: _\n"); // TODO
-    printf("Tamanho antes/depois & taxa de compressão (bloco _): _/_\n"); // TODO
-    printf("Taxa de compressão global: _%%\n"); // TODO
+    printf("Número de blocos: %d\n", code_list->len);
+    int initTotal = 0;
+    int endTotal = 0;
+    for(int i = 0; i < code_list->len; i++){
+        printf("Tamanho antes/depois & taxa de compressão (bloco %d): %ld/%d\n", i+1, code_list->lists[i].block_size, out_bytes->list[i].len);
+        initTotal += (int) code_list->lists[i].block_size;
+        endTotal += out_bytes->list[i].len;
+    }
+    int compress = endTotal / initTotal * 100;
+    printf("Taxa de compressão global: %d%%\n", compress);
     printf("Tempo de execução do módulo: %fms\n", elapsed);
-    printf("Ficheiro gerado: %s\n", &shaf_file);
+    printf("Ficheiro gerado: %s\n", shaf_file);
 }
+
+//int main_example(){
+//    codes_lists_struct codes_list;
+//    initCodesLists(&codes_list);
+//    readCodFile("../resources/aaa.txt.cod", &codes_list);
+//    printCodesLists(&codes_list);
+//
+//    printf("\n\n\n");
+//
+//    D_Matrix_List out_bytes;
+//    initMatrixList(&out_bytes);
+//    binary_encoding("../resources/aaa.txt", &codes_list, &out_bytes);
+//    printMatrixList(&out_bytes);
+//
+//    write_codes_in_file("out.shaf", &out_bytes);
+//}

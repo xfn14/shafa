@@ -16,7 +16,7 @@
  * @param[in] fp
  * @returns[out] file's size
  */
-int fsize(FILE *fp);
+int f_size(FILE *fp);
 /**
  * @brief Insert a letter num_reps times in a buffer
  *
