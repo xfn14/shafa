@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 
 long long fsize(FILE *fp_in, unsigned char *filename, unsigned long *the_block_size, long *size_of_last_block);
 

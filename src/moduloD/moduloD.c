@@ -73,7 +73,7 @@ int read_cod(char *filename, Abin *array_tree, size_t *block_size, size_t *nr_bl
         error_messages(2, ".cod");
         return 0;
     }
-    int file_size = fsize(fp);
+    int file_size = f_size(fp);
     unsigned char *buffer = (unsigned char *)calloc(file_size, sizeof(unsigned char));
     if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0) return 0;
     int index = skip(0, 2, buffer);
@@ -94,7 +94,7 @@ int shaf_decompression(char *read_file, char *output_file, size_t *block_size, s
         error_messages(0, read_file);
         return 0;
     }
-    int file_size = fsize(ptr);
+    int file_size = f_size(ptr);
     fp = fopen(output_file, "wb+");
     D_Array new_buffer, array;
     initArray(&array, 8);
@@ -149,7 +149,7 @@ int get_size(char *filename, size_t *nr_blocks, size_t *block_size) {
         error_messages(0, filename);
         return 0;
     }
-    int file_size = fsize(fp);
+    int file_size = f_size(fp);
     size_t block = 0;
     int index = 3 + lenHelper(*nr_blocks) + 1;
     unsigned char *buffer = (unsigned char *)calloc(file_size, sizeof(unsigned char));
@@ -216,10 +216,6 @@ size_t get_nr_blocks(int argc, char **argv) {
 
 int moduloD(int argc, char **argv) {
     clock_t begin = clock();
-    if (argc == 2 && !strcmp("--help", argv[1])) {
-        help_menu();
-        return 1;
-    }
     if (argc == 4 || argc == 5) {
         size_t block_number = get_nr_blocks(argc, argv);
         if (block_number == 0) return 0;
@@ -277,7 +273,7 @@ int moduloD(int argc, char **argv) {
     }
 }
 
-int main(int argc, char **argv) {
-    moduloD(argc, argv);
-    return 1;
-}
+//int main(int argc, char **argv) {
+//    moduloD(argc, argv);
+//    return 1;
+//}

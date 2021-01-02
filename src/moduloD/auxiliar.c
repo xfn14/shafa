@@ -1,6 +1,6 @@
 #include "auxiliar.h"
 
-int fsize(FILE *fp) {
+int f_size(FILE *fp) {
     fseek(fp, 0, SEEK_END);    
     int file_size = ftell(fp);  
     fseek(fp, 0, SEEK_SET);     

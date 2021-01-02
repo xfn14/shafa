@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
-//#include "../utils/fsize.h"
-#include "fsize.h"
+#include "../utils/fsize.h"
+//#include "fsize.h"
 
 char *dotfreq(char *filename);
 char *dotrle(char *filename);
