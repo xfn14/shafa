@@ -79,6 +79,7 @@ void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flagin
 }
 
 /*Esta função devolve o número de símbolos do ficheiro rle*/
+/*Esta função é usada nas funçôes rlecheck e split*/
 int simbcount(unsigned char *buffer, int sizebuffer){
     int i, counter=1, simbs=0;
     unsigned char c;
@@ -103,15 +104,17 @@ int simbcount(unsigned char *buffer, int sizebuffer){
 return simbs; 
 }
 
+/*Verifica se é ou não para gerar ficheiro rle consoante a taxa de compressão ou se é para forçar a compressão*/
+/*Esta função é usada na função split mais abaixo*/
 int rlecheck(unsigned char *buffer, int sizebuffer, unsigned long long total, int forcecompression){
     int ret = 0, simbs;
     float taxacomp;
-    if (total>=1024)
+    if (total>=1024) //Se o total (tamanho total do ficheiro) for inferior a 1024 bytes então não há compressão pois o ficheiro é demasiado pequeno
     {
-        simbs = simbcount (buffer, sizebuffer);
-        taxacomp =  (sizebuffer-simbs);
-        taxacomp /= sizebuffer;
-        if (taxacomp > 0.05 || forcecompression) ret = 1;
+        simbs = simbcount (buffer, sizebuffer); //Calcula o número de símbolos no primeiro se houver compressão
+        taxacomp =  (sizebuffer-simbs); //Ao tamanho do primeiro bloco do ficheiro original tiramos o valor de simbs calculado na linha anterior
+        taxacomp /= sizebuffer; //Dividimos o valor calculado na linha acima pelo tamanho do primeiro bloco do ficheiro original e temos a taxa de compressão
+        if (taxacomp > 0.05 || forcecompression) ret = 1; //Se a taxa de compressão for superior a 0.05 ou o utilizador decidir forçar a compressão a função irá devolver 1 
         else printf ("Rle compression was not done because the compression rate of the first block < 0.05\n\n");
     }
     else
@@ -121,6 +124,8 @@ int rlecheck(unsigned char *buffer, int sizebuffer, unsigned long long total, in
 return ret;
 }
 
+/*Esta função comprime o que estava no ficheiro original e devolve isso num buffer*/
+/*A função é chamada na função split*/
 unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *filename){
     FILE *fp;
     if (flaginit) fp = fopen (filename, "wb");
