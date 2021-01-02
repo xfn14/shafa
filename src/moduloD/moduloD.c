@@ -32,7 +32,6 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
         fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);
         clearArray(&new_buffer);
     }
-
     output_array[block] = new_buffer.used;  //keeping track of the size of the new block
     freeArray(&new_buffer);
     fclose(ptr);
@@ -93,51 +92,56 @@ int shaf_decompression(char *read_file, char *output_file, size_t *block_size, s
     if (ptr == NULL) {
         error_messages(0, read_file);
         return 0;
-    }
-    int file_size = f_size(ptr);
     fp = fopen(output_file, "wb+");
     D_Array new_buffer, array;
     initArray(&array, 8);
     initArray(&new_buffer, block_size[0]);
-    Abin tree = array_tree[0];
-    unsigned char *temp_buffer = (unsigned char *)calloc(file_size, sizeof(unsigned char));  //buffer for reading
-    if (fread(temp_buffer, sizeof(unsigned char), file_size, ptr) == 0) return 0;            //read block
+    Abin tree;          //read block
     int flag = 1, index = 1;
-    size_t nr_blocks = do_size(temp_buffer, &index), block = 0;
-    new_size[block] = do_size(temp_buffer, &index);
-    for (; index < file_size; index++) {
-        if (new_buffer.used == block_size[block]) {
-            if (++block < nr_blocks) {
-                index++;
-                new_size[block] = do_size(temp_buffer, &index);
-            }
-            index--;
-            flag = 1;
-            fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp);
-            clearArray(&new_buffer);
-            clearArray(&array);
-            tree = array_tree[block];
-        } else {
-            unsigned char res;
-            int bin[8];
-            int_bin(temp_buffer[index], bin);  //byte into an array
-            for (int i = 0; i < 8 && flag; i++) {
-                if (new_buffer.used == block_size[block])
-                    flag = 0;
-                else {
-                    insertArray(&array, bin[i]);  //insert the bit in the array
-                    if (search_tree(tree, &array, &res, 0) == 1) {
-                        insertArray(&new_buffer, res);
-                        clearArray(&array);
+    unsigned char *check_buffer = (unsigned char *)calloc(20, sizeof(unsigned char));  
+        if (fread(check_buffer, sizeof(unsigned char), 20, ptr) == 0) return 0; 
+    size_t nr_blocks = do_size(check_buffer, &index), block_i = 0;
+    new_size[0] = do_size(check_buffer,&index);
+    block_i = index;
+    fseek(ptr,index,SEEK_SET);
+    for (size_t n = 0; n < nr_blocks;n++){
+        tree = array_tree[n];
+        unsigned char *temp_buffer = (unsigned char *)calloc(new_size[n], sizeof(unsigned char));  
+        if (fread(temp_buffer, sizeof(unsigned char), new_size[n] , ptr) == 0) return 0;  
+        for (block_i = 0; block_i < new_size[n] && flag; block_i++) {
+            if (new_buffer.used == block_size[n])
+                flag = 0;
+            else{
+                unsigned char res;
+                int bin[8];
+                int_bin(temp_buffer[block_i], bin);  //byte into an array
+                for (int i = 0; i < 8 && flag; i++) {
+                    if (new_buffer.used == block_size[n]){
+                        flag = 0;
+                    }
+                    else {
+                        insertArray(&array, bin[i]);  //insert the bit in the array
+                        if (search_tree(tree, &array, &res, 0) == 1) {
+                            insertArray(&new_buffer, res);
+                            clearArray(&array);
+                        }
                     }
                 }
+             }
             }
-        }
+            fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp);
+            if (n+1 < nr_blocks){
+                unsigned char *buffer_size = (unsigned char *)calloc(10, sizeof(unsigned char));  
+                    if (fread(buffer_size, sizeof(unsigned char),10, ptr) == 0) return 0;
+                index = 1;
+                new_size[n+1]=do_size(buffer_size,&index);
+                fseek(ptr,-10+index,SEEK_CUR);
+                flag = 1;
+            }
+            clearArray(&new_buffer);
+            clearArray(&array);
+            free(temp_buffer);
     }
-    fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp);
-    freeArray(&new_buffer);
-    freeArray(&array);
-    free(temp_buffer);
     fclose(ptr);
     fclose(fp);
     return 1;
@@ -257,7 +261,6 @@ int moduloD(int argc, char **argv) {
             size_t *before = (size_t *)calloc(block_number, sizeof(size_t));
             memcpy (before,input_array,block_number * (sizeof (size_t)));
             rle_decompression(rle_file, output_file, output_array, input_array,block_number);
-            for(size_t i = 0;i <block_number;i++) printf("%zu -> %zu\n",i,before[i]);
             output_array = input_array;
             input_array = before;
 
@@ -272,6 +275,7 @@ int moduloD(int argc, char **argv) {
         return 0;
     }
 }
+
 
 //int main(int argc, char **argv) {
 //    moduloD(argc, argv);
