@@ -13,7 +13,9 @@
 #include "moduloD/manual.h"
 //#include "moduloT/ModuloT.h"
 #include "moduloC/ModuloC.h"
+#include "moduloF/moduloF.h"
 #include "moduloD/moduloD.h"
+
 
 int main(int argc, char **argv){
     if (argc == 2 && (!strcmp("--help", argv[1]) || !strcmp("-h", argv[1]))) {
@@ -24,9 +26,12 @@ int main(int argc, char **argv){
     if (argc >= 3 && !strcmp("-m", argv[2])){
         // Modulo F
         if(argc == 4  && !strcmp("f", argv[3])){
-        }
+        unsigned long block_size= 65536;
+        int forcecompression = 0;
+        moduloF(argc, argv, block_size, forcecompression);
+    }
 
-
+      
         // Modulo T
         if(argc == 4  && !strcmp("t", argv[3])){
         }

@@ -28,7 +28,7 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
 void rlecompressing(unsigned char *buffer , int flaginit, int sizebuffer, int simbs, char *filename);
 struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long size_of_last_block, unsigned long long total, int forcecompression);
 struct sizes number_of_blocks (char *filename, unsigned long block_size);
-void moduloF(char *filename, unsigned long block_size, int forcecompression);
-int main();
+void moduloF(int argc, char **argv, unsigned long block_size, int forcecompression);
+//int main();
 
 #endif //MOD_F_H

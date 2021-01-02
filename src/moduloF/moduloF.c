@@ -42,7 +42,6 @@ return newfilename;
 
 /*Cria um ficheiro de frequências e escreve lá a frequência de cada um dos códigos ASCII no ficheiro*/
 void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, char *filename, int flagend, int flagoriginal){
-    int *size_blocks;
     FILE *fp;
     if (flaginit){ //Esta flag permite-nos saber se já existia algum ficheiro com o mesmo nome, se sim então vai abri-lo, apagar o que lá havia e começar a escrever no ínicio do ficheiro
         fp = fopen (filename, "wb");
@@ -51,8 +50,9 @@ void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flagin
     }
     else fp = fopen (filename, "ab"); //Vimos para esta condição quando a flaginit é 0 o que significa que já existia um ficheiro com este nome
     fprintf(fp, "%d@", sizebuffer);
-    int i, j, z, counterant, *freqs = arrayazeros();
-        for (i=0; i<sizebuffer; i++){ //Este ciclo vai guardar em freqs, array criado pela função arrayzeros, as frequências de cada símbolo
+
+    int i, z, counterant, *freqs = arrayazeros();
+        for (i=0; i<sizebuffer; i++){
             z = *(buffer+i);
             *(freqs+z)+=1;
         }
@@ -147,7 +147,6 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
                 cont = 255;
                 *(rlebuffer + j)=zero;
                 *(rlebuffer + j+1)=c;
-   float taxacomp;
                 *(rlebuffer + j+2)=cont;
                 j+=3;  
                 counter -= 255; 
@@ -249,7 +248,8 @@ struct sizes number_of_blocks (char *filename, unsigned long block_size){
 return sizes;
 }
 
-void moduloF(char *filename, unsigned long block_size, int forcecompression){
+void moduloF(int argc, char **argv, unsigned long block_size, int forcecompression){
+   char *filename = argv[1];
    clock_t start_time = clock();
    time_t now;
    time(&now);
@@ -258,7 +258,6 @@ void moduloF(char *filename, unsigned long block_size, int forcecompression){
    day = data->tm_mday;            
    month = data->tm_mon + 1;       
    year = data->tm_year + 1900;
-   unsigned long size_of_last_block;
    struct tcomp_sizerleblocks tcomp_rlebsizes;
    struct sizes sizes = number_of_blocks(filename, block_size);
    
@@ -266,7 +265,6 @@ void moduloF(char *filename, unsigned long block_size, int forcecompression){
 
    clock_t stop_time = clock();
    double execution_time = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
-   time_t t = time(NULL);
 
    printf ("Daniela Carvalho (a93224) e Eduardo Magalhães (a93301), MIEI-CD, %02d/%02d/%d\n", day, month, year);
    printf ("Módulo: f (cálculo das frequências dos símbolos)\n");
@@ -294,9 +292,11 @@ void moduloF(char *filename, unsigned long block_size, int forcecompression){
    printf ("Tempo de execução do módulo (milissegundos) : %fms\n", execution_time);
 }
 
+/*
 int main(){
     unsigned long block_size= 8388608;//655360;
     char *filename = "bbb.zip";//"Shakespeare.txt";
     moduloF(filename, block_size, 1);
 return 1;
-}
+}*/
+
