@@ -43,8 +43,8 @@ void insert_Tree(Abin *tree, D_Array *code, unsigned char letter) {
     }
 }
 
-int search_tree(Abin tree, D_Array *code, unsigned char *result, int index) {
-    if (code->used == index) {
+int search_tree(Abin tree, D_Array *code, unsigned char *result, size_t index) {
+    if (code->used == index || tree == NULL) {
         if (tree->used) {
             *result = tree->data;
             return 1;  //search was successful
@@ -52,10 +52,14 @@ int search_tree(Abin tree, D_Array *code, unsigned char *result, int index) {
             return 0;  //node not in used -> search fail
     } else {
         unsigned char letter = code->array[index];
-        if (letter == 0)
-            return search_tree(tree->esq, code, result, index + 1);
-        else
-            return search_tree(tree->dir, code, result, index + 1);
+        if (letter == 0){
+            if (tree->esq == NULL) return 0; 
+            else return search_tree(tree->esq, code, result, index + 1);
+        }
+        else{
+            if (tree->dir == NULL) return 0;
+            else return search_tree(tree->dir, code, result, index + 1);
+        }
     }
 }
 

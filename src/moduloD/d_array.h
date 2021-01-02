@@ -7,8 +7,8 @@
 
 typedef struct {
     unsigned char *array;
-    int used;
-    int size;
+    size_t used;
+    size_t size;
 } D_Array;
 
 /**
