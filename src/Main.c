@@ -1,7 +1,7 @@
 /**
  * @file Shafa
  * @brief Shafa tool for data compression
- * @version 0.1
+ * @version 1.0
  * @date 2020-12-19
  * 
  * @copyright Copyright (c) 2020

@@ -293,5 +293,3 @@ void moduloF(char *filename, unsigned long block_size, int forcecompression){
    }   
    printf ("Tempo de execução do módulo (milissegundos) : %fms\n", execution_time);
 }
-
-

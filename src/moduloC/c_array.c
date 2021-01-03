@@ -1,3 +1,11 @@
+/**
+ * @file c_array.c
+ * @brief Estrutura para armazenar os codigos Shannon-Fano
+ * @date 2021-1-3
+ *
+ * @copyright Copyright (c) 2020 - André Vaz, Rui Alves
+ */
+
 #include "c_array.h"
 
 void initCode(code_struct *code){

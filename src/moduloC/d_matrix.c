@@ -1,3 +1,11 @@
+/**
+ * @file d_matrix.c
+ * @brief Estrutura para armazenar os bytes já codificados
+ * @date 2021-1-3
+ *
+ * @copyright Copyright (c) 2020 - André Vaz, Rui Alves
+ */
+
 #include "d_matrix.h"
 
 void initMatrix(D_Matrix *m){
