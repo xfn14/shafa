@@ -128,7 +128,7 @@ return ret;
 /*A função é chamada na função split*/
 unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *filename){
     FILE *fp;
-    if (flaginit) fp = fopen (filename, "wb");
+    if (flaginit) fp = fopen (filename, "wb"); //Se estiver no primeiro bloco escreve no início do fiheiro, caso contrário escreve no final
     else fp = fopen (filename, "ab"); 
     int i, j=0, counter = 1;
     unsigned char *rlebuffer = malloc (sizebuffer* sizeof(unsigned char)*2);
@@ -173,7 +173,7 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
 return rlebuffer;
 }
 
-/*Esta função vai calcular a taxa de compressão e o tamanho dos blocos analizados no ficheiro rle*/
+/*Esta função vai calcular a taxa de compressão e o tamanho dos blocos analisados no ficheiro rle*/
 /*A funão retorna dois valores que são usados na função moduloF*/
 struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long long total, int forcecompression){
     struct tcomp_sizerleblocks ret;
