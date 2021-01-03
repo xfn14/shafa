@@ -4,12 +4,12 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
     FILE *ptr, *fp;
     ptr = fopen(filename, "rb");  //open the file we want to read
     if (ptr == NULL) {
-        error_messages(0, filename);
+        error_messages(0, filename);  //can't read the file
         return 0;
     }
     size_t block = 0;
-    fp = fopen(new_file, "wb+");                      //open the file we will write
-    size_t output_size = output_array[block], u = 0;  //keep track of the current size of the block
+    fp = fopen(new_file, "wb+");               //open the file we will write
+    size_t output_size = output_array[block];  //keep track of the current size of the block
     D_Array new_buffer;
     initArray(&new_buffer, output_size);
     unsigned char *temp_buffer;  //initiate dynamic array
@@ -18,7 +18,7 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
         temp_buffer = (unsigned char *)calloc(block_size, sizeof(unsigned char));
         if (fread(temp_buffer, sizeof(unsigned char), block_size, ptr) == 0)  //read the current block
             return 0;
-        for (u = 0; u < block_size; u++) {
+        for (size_t u = 0; u < block_size; u++) {
             if (temp_buffer[u] == 0)  //for the rle compression case
             {
                 unsigned char letter = temp_buffer[u + 1];
@@ -28,8 +28,8 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
             } else
                 insertArray(&new_buffer, temp_buffer[u]);  //normal character
         }
-        output_array[block++] = new_buffer.used;
-        fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);
+        output_array[block++] = new_buffer.used;                                   //keeping track of the size of the new block
+        fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);  //write the block in file
         clearArray(&new_buffer);
     }
     output_array[block] = new_buffer.used;  //keeping track of the size of the new block
@@ -42,24 +42,24 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
 Abin do_tree(unsigned char *buffer, int *index, int file_size, size_t *block_size, int block_index) {
     unsigned char element = 0;
     Abin tree;
-    tree = init_tree();
+    tree = init_tree();  //initiate the tree
     D_Array arr;
     initArray(&arr, 5);
     int flag = 1;
     for (int i = *index; i < file_size && flag; i++) {
-        if (buffer[i] == '@') {
+        if (buffer[i] == '@') {  //end of block case
             if (arr.used != 0)
                 insert_Tree(&tree, &arr, element);  //insert every code in tree
-            if (buffer[i + 1] == '0') return tree;
+            if (buffer[i + 1] == '0') return tree;  //last block case
             *index = i + 1;
-            block_size[block_index] = do_size(buffer, index);
+            block_size[block_index] = do_size(buffer, index);  //keep track of block's size
             flag = 0;
         } else if (buffer[i] == ';') {
             if (arr.used != 0)
                 insert_Tree(&tree, &arr, element);  //insert every code in tree
             element++;
         } else
-            insertArray(&arr, buffer[i]);
+            insertArray(&arr, buffer[i]);  //insert the number(0/1) in the array
     }
     freeArray(&arr);
     return tree;
@@ -69,17 +69,17 @@ int read_cod(char *filename, Abin *array_tree, size_t *block_size, size_t *nr_bl
     FILE *fp;
     fp = fopen(filename, "rb");
     if (fp == NULL) {
-        error_messages(2, ".cod");
+        error_messages(2, ".cod");  //can't read the file
         return 0;
     }
-    int file_size = f_size(fp);
+    int file_size = f_size(fp);  //get the file size
     unsigned char *buffer = (unsigned char *)calloc(file_size, sizeof(unsigned char));
     if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0) return 0;
     int index = skip(0, 2, buffer);
     *nr_blocks = do_size(buffer, &index);
     *block_size = do_size(buffer, &index);
     for (size_t block = 0; block < *nr_blocks; block++) {
-        array_tree[block] = do_tree(buffer, &index, file_size, block_size, block + 1);
+        array_tree[block] = do_tree(buffer, &index, file_size, block_size, block + 1);  //insert the tree in array_tree
     }
     free(buffer);
     fclose(fp);
@@ -90,19 +90,19 @@ int shaf_decompression(char *read_file, char *output_file, size_t *output_size, 
     FILE *fp, *ptr;
     ptr = fopen(read_file, "rb");
     if (ptr == NULL) {
-        error_messages(0, read_file);
+        error_messages(0, read_file);  //can't read the file
         return 0;
     }
-    fp = fopen(output_file, "wb+");
+    fp = fopen(output_file, "wb+");  // file to write
     D_Array new_buffer, array;
     initArray(&array, 8);
-    initArray(&new_buffer, output_size[0]);
-    Abin tree;  //read block
+    initArray(&new_buffer, output_size[0]);  //buffer to store what to write
+    Abin tree;
     int flag = 1, index = 1;
     unsigned char *check_buffer = (unsigned char *)calloc(20, sizeof(unsigned char));
     if (fread(check_buffer, sizeof(unsigned char), 20, ptr) == 0) return 0;
     size_t nr_blocks = do_size(check_buffer, &index), block_i = 0;
-    input_size[0] = do_size(check_buffer, &index);
+    input_size[0] = do_size(check_buffer, &index);  //size of the first block
     block_i = index;
     fseek(ptr, index, SEEK_SET);
     for (size_t n = 0; n < nr_blocks; n++) {

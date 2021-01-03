@@ -3,8 +3,6 @@
 #include <string.h>
 #include "manual.h"
 
-//void clrscr(){if(system("@cls||clear")==0)return;}
-
 void n_lines (int n){
     for (int i = 0;i<n;i++) printf(COR"█║\t\t\t\t\t\t\t\t\t║█\n"COR_RESET);
 }

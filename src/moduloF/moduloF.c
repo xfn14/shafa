@@ -237,7 +237,7 @@ struct sizes number_of_blocks (char *filename, unsigned long block_size){
     struct sizes sizes;
     fp = fopen (filename, "rb");
     unsigned long long total;
-    unsigned long size_of_last_block;
+    long size_of_last_block;
     long long n_blocks = fsize(fp, NULL, &block_size, &size_of_last_block);
     total = (n_blocks-1) * block_size + size_of_last_block;
     sizes.total = total;
