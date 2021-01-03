@@ -38,7 +38,6 @@ void getSymbCode(code_list_struct *code_list, unsigned char symb, int offset, co
     for(int i = 0; i < code_list->len; i++){
         if(code_list->codes[i].symb == symb
            && code_list->codes[i].offset == offset){
-//            printCode(&code_list->codes[i]);
             *out_code = code_list->codes[i];
         }
     }

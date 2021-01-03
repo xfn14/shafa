@@ -50,9 +50,6 @@ void printMatrix(D_Matrix *m){
 }
 
 void freeMatrix(D_Matrix *m){
-//    for(int i = 0; i < m->len; i++){
-//        freeArray(&m->arr[i]);
-//    }
     free(m->arr);
     m->arr = NULL;
     m->len = 0;
@@ -67,15 +64,6 @@ void insertMatrixInList(D_Matrix_List *m_list, D_Matrix m){
     m_list->list = realloc(m_list->list, (m_list->len+2)*sizeof(D_Matrix));
     m_list->list[m_list->len] = m;
     m_list->len++;
-
-//    D_Matrix copy;
-//    initMatrix(&copy);
-//    for(int i = 0; i < m.len; i++){
-//        addLineMatrix(&copy, m.arr[i]);
-//    }
-//    copy.len = m.len;
-
-
 }
 
 void clearMatrixList(D_Matrix_List *m_list){
@@ -93,9 +81,6 @@ void printMatrixList(D_Matrix_List *m_list){
 }
 
 void freeMatrixList(D_Matrix_List *m_list){
-//    for(int i = 0; i < m_list->len; i++){
-//        freeMatrix(&m_list->list[i]);
-//    }
     free(m_list->list);
     m_list->list = NULL;
     m_list->len = 0;
