@@ -25,10 +25,47 @@ int main(int argc, char **argv){
 
     if (argc >= 3 && !strcmp("-m", argv[2])){
         // Modulo F
-        if(argc == 4  && !strcmp("f", argv[3])){
+        if(argc >= 4  && !strcmp("f", argv[3])){
         unsigned long block_size= 65536;
         int forcecompression = 0;
-        moduloF(argc, argv, block_size, forcecompression);
+        char *filename = argv[1];
+        if(argc == 4  && !strcmp("f", argv[3])){
+            moduloF(filename, block_size, forcecompression);
+        }
+        if(argc == 6  && !strcmp("f", argv[3]) && !strcmp("-b", argv[4])){
+            if(!strcmp("K", argv[5])){
+                printf ("entrei\n");
+                block_size = 655360;
+                moduloF(filename, block_size, forcecompression);
+            }
+            if(!strcmp("m", argv[5])){
+                block_size = 8388608;
+                moduloF(filename, block_size, forcecompression);
+            }
+            if(!strcmp("M", argv[5])){
+                block_size = 67108864;
+                moduloF(filename, block_size, forcecompression);
+            }
+        }
+        if(argc == 6  && !strcmp("f", argv[3]) && !strcmp("-c", argv[4])){
+            forcecompression = 1;
+            moduloF(filename, block_size, forcecompression);
+        }
+        if(argc == 8  && !strcmp("f", argv[3]) && !strcmp("-c", argv[6]) && !strcmp("-b", argv[4])){
+            forcecompression = 1;
+             if(!strcmp("K", argv[5])){
+                block_size = 655360;
+                moduloF(filename, block_size, forcecompression);
+            }
+            if(!strcmp("m", argv[5])){
+                block_size = 8388608;
+                moduloF(filename, block_size, forcecompression);
+            }
+            if(!strcmp("M", argv[5])){
+                block_size = 67108864;
+                moduloF(filename, block_size, forcecompression);
+            }
+        }
     }
 
       
