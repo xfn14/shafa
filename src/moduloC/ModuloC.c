@@ -1,3 +1,11 @@
+/**
+ * @file ModuloC.c
+ * @brief Shannon-Fano Compression
+ * @date 2021-1-3
+ *
+ * @copyright Copyright (c) 2020 - André Vaz, Rui Alves
+ */
+
 #include "ModuloC.h"
 
 /**
