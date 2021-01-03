@@ -1,3 +1,11 @@
+/**
+ * @file moduloD.h
+ * @brief Main file of ModuloD
+ * @date 2021-1-3
+ * 
+ * @copyright Copyright (c) 2020 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

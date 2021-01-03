@@ -28,7 +28,7 @@ void insert_Tree(Abin *tree, D_Array *code, unsigned char letter) {
         (*tree)->data = letter;
         return;
     }
-    if (code->array[0] == '0') {
+    if (code->array[0] == '0') { //('0' -> left, '1' -> right)   
         if ((*tree)->esq == NULL) {
             add_new(*tree, 0);
         }

@@ -1,3 +1,11 @@
+ /**
+ * @file d_Array.h
+ * @brief File for D_array struct
+ * @date 2021-1-3
+ * 
+ * @copyright Copyright (c) 2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 

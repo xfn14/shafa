@@ -1,3 +1,10 @@
+/**
+ * @file manual.h
+ * @brief Help Menu
+ * @date 2021-1-3
+ * 
+ * @copyright Copyright (c) 2020
+ */
 #ifndef _MANUAL_
 #define _MANUAL_
 
@@ -27,6 +34,10 @@
 #define TIT COR_B_VERDE
 #define SUB_TIT COR_B_VERDE
 
+
+/**
+ * @brief Display the help menu
+ */
 void help_menu ();
 
 #endif

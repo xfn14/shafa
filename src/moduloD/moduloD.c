@@ -74,7 +74,7 @@ int read_cod(char *filename, Abin *array_tree, size_t *block_size, size_t *nr_bl
     }
     int file_size = f_size(fp);  //get the file size
     unsigned char *buffer = (unsigned char *)calloc(file_size, sizeof(unsigned char));
-    if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0) return 0;
+    if (fread(buffer, sizeof(unsigned char), file_size, fp) == 0) return 0; //read the .cod file
     int index = skip(0, 2, buffer);
     *nr_blocks = do_size(buffer, &index);
     *block_size = do_size(buffer, &index);
@@ -101,14 +101,14 @@ int shaf_decompression(char *read_file, char *output_file, size_t *output_size, 
     int flag = 1, index = 1;
     unsigned char *check_buffer = (unsigned char *)calloc(20, sizeof(unsigned char));
     if (fread(check_buffer, sizeof(unsigned char), 20, ptr) == 0) return 0;
-    size_t nr_blocks = do_size(check_buffer, &index), block_i = 0;
+    size_t nr_blocks = do_size(check_buffer, &index), block_i = 0; //number of blocks
     input_size[0] = do_size(check_buffer, &index);  //size of the first block
     block_i = index;
     fseek(ptr, index, SEEK_SET);
     for (size_t n = 0; n < nr_blocks; n++) {
-        tree = array_tree[n];
+        tree = array_tree[n];  // tree of current block
         unsigned char *temp_buffer = (unsigned char *)calloc(input_size[n], sizeof(unsigned char));
-        if (fread(temp_buffer, sizeof(unsigned char), input_size[n], ptr) == 0) return 0;
+        if (fread(temp_buffer, sizeof(unsigned char), input_size[n], ptr) == 0) return 0; //reading the block
         for (block_i = 0; block_i < input_size[n] && flag; block_i++) {
             if (new_buffer.used == output_size[n])
                 flag = 0;
@@ -129,13 +129,13 @@ int shaf_decompression(char *read_file, char *output_file, size_t *output_size, 
                 }
             }
         }
-        fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp);
-        if (n + 1 < nr_blocks) {
-            unsigned char *buffer_size = (unsigned char *)calloc(10, sizeof(unsigned char));
+        fwrite(new_buffer.array, new_buffer.used, sizeof(unsigned char), fp); // write block in the file
+        if (n + 1 < nr_blocks) {  
+            unsigned char *buffer_size = (unsigned char *)calloc(10, sizeof(unsigned char));//for reading size of next block
             if (fread(buffer_size, sizeof(unsigned char), 10, ptr) == 0) return 0;
             index = 1;
             input_size[n + 1] = do_size(buffer_size, &index);
-            fseek(ptr, -10 + index, SEEK_CUR);
+            fseek(ptr, -10 + index, SEEK_CUR);//Set the file pointer to beggining of next block
             flag = 1;
         }
         clearArray(&new_buffer);
@@ -219,7 +219,7 @@ size_t get_nr_blocks(int argc, char **argv) {
 }
 
 int moduloD(int argc, char **argv) {
-    clock_t begin = clock();
+    clock_t begin = clock(); //to keep track of execution time
     if (argc == 4 || argc == 5) {
         size_t block_number = get_nr_blocks(argc, argv);
         if (block_number == 0) return 1;
@@ -227,15 +227,15 @@ int moduloD(int argc, char **argv) {
         struct tm tm = *localtime(&t);
         int success = 1, do_rle = 0, only_shaf = 0;
         size_t *input_array, *output_array;
-        output_array = (size_t *)calloc(block_number, sizeof(size_t));
-        input_array = (size_t *)calloc(block_number, sizeof(size_t));
+        output_array = (size_t *)calloc(block_number, sizeof(size_t));//To store the output block's sizes 
+        input_array  = (size_t *)calloc(block_number, sizeof(size_t));//To store the input block's sizes 
         char *filename = argv[1];
         int size = strlen(filename);
         char cod_file[size - 1], output_file[size - 4], rle_file[size - 4];
-        Abin *array_tree = (Abin *)calloc(block_number, sizeof(Abin));
+        Abin *array_tree = (Abin *)calloc(block_number, sizeof(Abin));//To store the codes of each block
         if (argc == 5) {
             if (argv[4][0] == 'r') {
-                if (strstr(filename, ".shaf") != 0) {
+                if (strstr(filename, ".shaf") != 0) { //trying to do rle decompression in rle.shaf
                     error_messages(1, "");
                     return 1;
                 }
@@ -274,8 +274,3 @@ int moduloD(int argc, char **argv) {
         return 1;
     }
 }
-
-//int main(int argc, char **argv) {
-//    return moduloD(argc, argv);
-//
-//}

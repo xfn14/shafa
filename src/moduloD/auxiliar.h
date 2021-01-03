@@ -1,3 +1,11 @@
+/**
+ * @file auxiliar.h
+ * @brief Auxiliar functions of moduloD
+ * @date 2021-1-3
+ * 
+ * @copyright Copyright (c) 2020
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
