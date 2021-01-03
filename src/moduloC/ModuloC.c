@@ -15,9 +15,9 @@ int moduloC(int argc, char **argv){
 
     // Nomes dos ficheiros .cod e .shaf
     char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
-    strcat(cod_file, fileName); strcat(cod_file, ".cod");
+    strcpy(cod_file, fileName); strcat(cod_file, ".cod");
     char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
-    strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
+    strcpy(shaf_file, fileName); strcat(shaf_file, ".shaf");
 
     // Ler os codigos do ficheiro .cod
     codes_lists_struct codes_list;
