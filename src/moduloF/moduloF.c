@@ -173,7 +173,7 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
 return rlebuffer;
 }
 
-struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long size_of_last_block, unsigned long long total, int forcecompression){
+struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long long total, int forcecompression){
     struct tcomp_sizerleblocks ret;
     ret.taxa_comp=0;
     int bytesRead, flaginit=1, simbs=0, flagrle=0, flagend=0, *arrayrleblocks = array_rle_blocksize_zeros(n_blocks), bloco = 0;
@@ -248,8 +248,7 @@ struct sizes number_of_blocks (char *filename, unsigned long block_size){
 return sizes;
 }
 
-void moduloF(int argc, char **argv, unsigned long block_size, int forcecompression){
-   char *filename = argv[1];
+void moduloF(char *filename, unsigned long block_size, int forcecompression){
    clock_t start_time = clock();
    time_t now;
    time(&now);
@@ -261,7 +260,7 @@ void moduloF(int argc, char **argv, unsigned long block_size, int forcecompressi
    struct tcomp_sizerleblocks tcomp_rlebsizes;
    struct sizes sizes = number_of_blocks(filename, block_size);
    
-   tcomp_rlebsizes = split(filename, block_size, sizes.n_blocks, sizes.size_of_last_block, sizes.total, forcecompression);
+   tcomp_rlebsizes = split(filename, block_size, sizes.n_blocks, sizes.total, forcecompression);
 
    clock_t stop_time = clock();
    double execution_time = (double)(stop_time-start_time)/CLOCKS_PER_SEC*1000;
@@ -292,11 +291,4 @@ void moduloF(int argc, char **argv, unsigned long block_size, int forcecompressi
    printf ("Tempo de execução do módulo (milissegundos) : %fms\n", execution_time);
 }
 
-/*
-int main(){
-    unsigned long block_size= 8388608;//655360;
-    char *filename = "bbb.zip";//"Shakespeare.txt";
-    moduloF(filename, block_size, 1);
-return 1;
-}*/
 
