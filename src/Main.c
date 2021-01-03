@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "moduloD/manual.h"
-//#include "moduloT/ModuloT.h"
+#include "moduloT/ModuloT.h"
 #include "moduloC/ModuloC.h"
 #include "moduloF/moduloF.h"
 #include "moduloD/moduloD.h"
@@ -70,8 +70,16 @@ int main(int argc, char **argv){
 
       
         // Modulo T
-        if(argc == 4  && !strcmp("t", argv[3])){
+    if(argc == 4  && !strcmp("t", argv[3])){
+        int r = moduloT(argv[1]);
+        switch (r){
+            case 1 : printf ("Falha ao abrir o ficheiro de input\n"); break;
+            case 2 : printf ("Falha ao criar/ler o ficheiro de output\n");break;
+            default: break;
         }
+        return r;
+
+    }
 
 
         // Modulo C
