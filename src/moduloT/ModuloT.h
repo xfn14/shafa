@@ -6,8 +6,9 @@ Main do ModuloT
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <ctype.h>
-#include "utils.h"
+#include "..\utils\utils.h"
 
 #define CHARS 256
 
