@@ -9,6 +9,9 @@
 
 #include <stdlib.h>
 
+#ifndef _LISTA_H_
+#define _LISTA_H_
+
 typedef struct LL {
     int size;
     int last;
@@ -42,3 +45,5 @@ void freeLista (LISTA l);
 void copyStrLista (LISTA outputCods, char *fileCont, int fst, int lst);
 
 void switchLista (LISTA SF[],int i,int last);
+
+#endif

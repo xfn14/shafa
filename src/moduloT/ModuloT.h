@@ -8,7 +8,10 @@ Main do ModuloT
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
-#include "..\utils\utils.h"
+//#include "../utils/utils.h"
+#include "../utils/Lista.h"
+#include "../utils/Pares.h"
+#include "../utils/fsize.h"
 
 #define CHARS 256
 

@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+#ifndef _PARES_H_
+#define _PARES_H_
+
 /**
  * @brief Type de um par
  * 
@@ -22,3 +25,5 @@ void switchPares (endPar arPares[], int fsr, int lst);
 void setPar (endPar arPares, int simb, int freq);
 void cpPar_Snd (endPar source[],endPar dest[],int size,int def);
 void freeArPares (endPar ar[],int size);
+
+#endif
