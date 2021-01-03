@@ -133,16 +133,16 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
     int i, j=0, counter = 1;
     unsigned char *rlebuffer = malloc (sizebuffer* sizeof(unsigned char)*2);
     unsigned char c, zero=0, cont;
-    for (i = 0; i < sizebuffer; i++)
+    for (i = 0; i < sizebuffer; i++) //Vai percorrer o bloco todo
     {
-        c= *((buffer)+i);
-        while (*((buffer)+i) == *((buffer)+i+1))
+        c= *((buffer)+i); //Atribui à variável c o que está na posição i do buffer (que contém o que estava no ficheiro original)
+        while (*((buffer)+i) == *((buffer)+i+1)) //Enquando duas posições consecutivas do buffer forem iguais o counter vai aumentar
         {
             counter++;
             i++;
         }
         if (counter > 255) {
-            while (counter/255 > 0)
+            while (counter/255 > 0) //Como o terceiro elemento do formato {0}1{símbolo}1{número_de_repetições}1 não pode ser superior a 255 vamos repetir o ciclo while até que o counter seja menor que 255
             {
                 cont = 255;
                 *(rlebuffer + j)=zero;
@@ -152,7 +152,7 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
                 counter -= 255; 
             }         
         }
-        if (counter >3 || c==0){ 
+        if (counter >3 || c==0){ //Quando tem mais do que 3 símbolos iguais seguidos ou é um caracter nulo ocorre a compressão ficando no formato {0}1{símbolo}1{número_de_repetições}1
                 cont = counter;
                 *(rlebuffer + j)=zero;
                 *(rlebuffer + j+1)=c;
@@ -160,7 +160,7 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
                 j+=3;  
         }
         else{
-            for ( int z=0; z < counter; z++)
+            for ( int z=0; z < counter; z++) //Se nenhuma das condições anteriores se verificar então não ocorre compressão e escreve-se apenas o que estava no  buffer
             {
                 *(rlebuffer + j)=c;
                 j++;
@@ -168,11 +168,13 @@ unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *fi
         }
         counter=1;
     }
-    fwrite(rlebuffer, sizeof(unsigned char), j, fp);
-    fclose(fp);
+    fwrite(rlebuffer, sizeof(unsigned char), j, fp); //Escreve o buffer comprimido no ficheiro
+    fclose(fp); //Fecha o ficheiro
 return rlebuffer;
 }
 
+/*Esta função vai calcular a taxa de compressão e o tamanho dos blocos analizados no ficheiro rle*/
+/*A funão retorna dois valores que são usados na função moduloF*/
 struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long long total, int forcecompression){
     struct tcomp_sizerleblocks ret;
     ret.taxa_comp=0;
@@ -181,21 +183,21 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
     char *filenamefreq = dotfreq(filename), *filenamerle = dotrle(filename), *filenamerlefreq = dotfreq(filenamerle);
     FILE *exsistingFile;
     exsistingFile = fopen(filename,"rb");        
-    int workSize = total;
-        while (workSize)
+    int workSize = total; //A variável worksize toma o valor da variável total que é igual ao tamanho total do ficheiro recebido
+        while (workSize) //Enquando o ficheiro não acabar ocorre o ciclo while
         {
-            int chunkSize ;
+            int chunkSize ; //Esta variável toma o valor do tamanho do bloco que vai ser analizado
             if (workSize<= block_size+1024)
             {
                 chunkSize = workSize;
             }
-            else
+            else //Quando o tamanho do ficheiro que falta analisar é menor que o tamanho do bloco, dado como argumento, a variável chunkzise toma o valor da variável worksize
             {
                 chunkSize= workSize > block_size ? block_size : workSize;
             }
             unsigned char *buffer = (unsigned char *)malloc(chunkSize);
             bytesRead = fread( buffer, sizeof(unsigned char), chunkSize, exsistingFile );
-            workSize -= bytesRead;
+            workSize -= bytesRead; //Retira ao worksize o tamanho do bloco que foi lido, diminhuido o que falta analizar
             if (!workSize) flagend = 1;
             if (flaginit && rlecheck(buffer, chunkSize, total, forcecompression)){
                 rle(buffer, chunkSize, flaginit, filenamerle);
@@ -220,7 +222,7 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
             free(buffer);
             bloco++;
         }
-if (flagrle){
+if (flagrle){ //Se se gerou ficheiro rle vai calcular a taxa de compressão e vai guardar em ret o array que contém os tamanhos dos blocos analizados nos ficheiros rle, caso contrário não faz nada e a taxa de compressão continua 0
 taxacomp =  total;
 taxacomp -= simbs;
 taxacomp /= total;
@@ -248,6 +250,7 @@ struct sizes number_of_blocks (char *filename, unsigned long block_size){
 return sizes;
 }
 
+/*Função que junta tudo o que é feito neste módulo e imprime os resultados para o utilizador ver*/
 void moduloF(char *filename, unsigned long block_size, int forcecompression){
    clock_t start_time = clock();
    time_t now;
