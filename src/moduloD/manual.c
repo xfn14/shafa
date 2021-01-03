@@ -24,7 +24,6 @@ void do_frase(char*str,char *cor,int tabs){
 void print_line (){
     n_lines(1);
     printf(COR"█╠══════════════════════════════════════════════════════════════════════╣█\n"COR_RESET);
-    //printf(COR"█████████████████████████████████████████████████████████████████████████\n"COR_RESET);
     n_lines(1);
 }
 
@@ -51,26 +50,37 @@ void help_menu (){
     print_line();
     do_frase("MODULES",TIT,1);
     n_lines(1);
-    do_frase ("-f:",SUB_TIT,1);
-    do_frase("Creates a new file that does rle compression to the file",COR_RESET,0);
+    do_frase ("f:",SUB_TIT,1);
     do_frase("Creates a file .freq with the number of frequences",COR_RESET,0);
+    do_frase("If the rle compression of 1st block is > 5%:",COR_RESET,0);
+    do_frase("Does rle compression to the file. Creates .rle",COR_RESET,1);
     n_lines(1);
-    do_frase ("e.g.",SUB_TIT,1);
-    do_frase ("shafa example.txt -m f",COR_RESET,0);
+    do_frase("OPTIONS:",TIT,2);
+    do_frase("-b K|m|M:",SUB_TIT,2);
+    do_frase("Indicates the block size:",COR_RESET,1);
+    do_frase("K -> 640KBytes",COR_RESET,2);
+    do_frase("m -> 8MBytes",COR_RESET,2);
+    do_frase("M -> 64MBytes",COR_RESET,2);
+    do_frase("default:64KBytes",COR_RESET,1);
+    do_frase ("e.g.",SUB_TIT,0);
+    do_frase ("shafa example.txt -m f -c r",COR_RESET,0);
     do_frase("-> example.txt.rle and example.txt.freq",COR_RESET,0);
+    n_lines(1);
+    do_frase("-c r:",SUB_TIT,2);
+    do_frase("Forces the rle compression",COR_RESET,1);
     print_line();
-    do_frase ("-t:",SUB_TIT,1);
+    do_frase ("t:",SUB_TIT,1);
     do_frase("Creates a new file .cod using the .freq to generate Shannon Fano",COR_RESET,0);
     do_frase("coding",COR_RESET,0); 
     n_lines(1);
-    do_frase ("e.g.",SUB_TIT,1); 
+    do_frase ("e.g.",SUB_TIT,0); 
     do_frase ("shafa example.txt.rle.freq -m t",COR_RESET,0);
     do_frase("-> example.txt.rle.cod",COR_RESET,0);
     print_line();
-    do_frase ("-c:",SUB_TIT,1);
+    do_frase ("c:",SUB_TIT,1);
     do_frase("Uses the codes from .cod file to compress original file",COR_RESET,0);
     n_lines(1);
-    do_frase ("e.g.",SUB_TIT,1);
+    do_frase ("e.g.",SUB_TIT,0);
     do_frase ("shafa example.txt.rle -m c",COR_RESET,0);
     do_frase("-> example.txt.rle.shaf",COR_RESET,0);
     print_line();

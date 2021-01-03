@@ -1,3 +1,11 @@
+/**
+ * @file Tree
+ * @brief File for Abin struct
+ * @date 2021-1-3
+ * 
+ * @copyright Copyright (c) 2020
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +37,7 @@ void add_new(Abin tree, int lado);
  * @brief Insert a letter to Tree given the path
  *
  * @param[in] Tree
- * @param[in] Code Where the path is stored
+ * @param[in] Code Where the path is stored: Array of 0/1 (0 -> left)(1 ->right)
  * @param[in] letter The letter to be stored 
  */
 void insert_Tree(Abin *tree, D_Array *code, unsigned char letter);

@@ -61,7 +61,7 @@ void error_messages(int n,char *str) {
         default:
             break;
     }
-    printf(" See --help for more information\n");
+    printf(" See --help or -h for more information\n");
 }
 
 void output_text (size_t nr_blocks,size_t* input_array,size_t* output_array,char* output_file,char* rle_file, double time_spent,int do_rle, struct tm tm){
