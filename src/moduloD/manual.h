@@ -25,7 +25,7 @@
 
 #define COR COR_B_AZUL
 #define TIT COR_B_VERDE
-#define SUB_TIT COR_N_VERDE
+#define SUB_TIT COR_B_VERDE
 
 void help_menu ();
 

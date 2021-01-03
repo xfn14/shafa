@@ -50,10 +50,10 @@ void error_messages(int n,char *str) {
     printf(COR_B_VERMELHO"ERROR:"COR_RESET);
     switch (n) {
         case 0:
-            printf(" Can't read the file: \"%s\"\nSee --help for more information\n",str);
+            printf(" Can't read the file: \"%s\"\n",str);
             break;
         case 1:
-            printf(" Incorrect format\nSee --help for more information\n");
+            printf(" Incorrect format\n");
             break;
         case 2:
             printf(" Can't find %s file\n",str);
@@ -61,6 +61,7 @@ void error_messages(int n,char *str) {
         default:
             break;
     }
+    printf(" See --help for more information\n");
 }
 
 void output_text (size_t nr_blocks,size_t* input_array,size_t* output_array,char* output_file,char* rle_file, double time_spent,int do_rle, struct tm tm){
