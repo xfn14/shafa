@@ -43,12 +43,12 @@ return newfilename;
 /*Cria um ficheiro de frequências e escreve lá a frequência de cada um dos códigos ASCII no ficheiro*/
 void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flaginit, char *filename, int flagend, int flagoriginal){
     FILE *fp;
-    if (flaginit){ //Esta flag permite-nos saber se já existia algum ficheiro com o mesmo nome, se sim então vai abri-lo, apagar o que lá havia e começar a escrever no ínicio do ficheiro
+    if (flaginit){//Se estiver no primeiro bloco escreve no início do fiheiro, caso contrário escreve no final
         fp = fopen (filename, "wb");
         if (flagoriginal) fprintf(fp, "@N@%lld@", n_blocks); //Esta flag diz-nos se vamos criar o ficheiro das frequências referente ao ficheiro orginal (filename.freq) ou referente ao ficheiro rle (filename.rle.freq)
         else fprintf (fp, "@R@%lld@", n_blocks); //Isto acontece quando a flagorinal é igual a 0 e portanto o ficheiro das frequências é referente ao ficheiro rle
     }
-    else fp = fopen (filename, "ab"); //Vimos para esta condição quando a flaginit é 0 o que significa que já existia um ficheiro com este nome
+    else fp = fopen (filename, "ab"); 
     fprintf(fp, "%d@", sizebuffer);
 
     int i, z, counterant, *freqs = arrayazeros();
@@ -60,14 +60,14 @@ void freqs(unsigned char *buffer, int sizebuffer, long long n_blocks, int flagin
     {
         int counter = *(freqs+y);
         if (y==0){ //Se estiver na primeira posição do array vai apenas imprimir o que lá está seguido dum ";"
-            counterant = counter; //Guarda o valor que se encontra nessa posição na variável couterant
+            counterant = counter; //Guarda o valor que se encontra nessa posição na variável couterant (inicializa a variável counterant)
             fprintf(fp, "%d;",*(freqs+y));
         }
         else if (counterant==counter){ //Se as duas frequências consecutivas forem iguais então escreve apenas um ";"
                  if(y!=255) fprintf(fp, ";");
                  counterant=counter; //Atualiza o valor de counterant
         }
-        else{ //Se nenhuma das condições anteriores se verificar exreve no ficheiro o valor que se encontra na posição y do array freqs
+        else{ //Se nenhuma das condições anteriores se verificar escreve no ficheiro o valor que se encontra na posição y do array freqs
             fprintf(fp, "%d", counter);
             if(y!=255) fprintf(fp, ";"); //Se não se encontrar na última posição do array então vai escrever um ";"
             counterant=counter; //Atualiza a variável counterant
@@ -99,7 +99,7 @@ int simbcount(unsigned char *buffer, int sizebuffer){
         }
         if (counter > 3 || c==0)  simbs+=3; //Se o counter for maior que 3 (e menor que 255) ou se o caracter for o caracter nulo então passa-se para o formato {0}1{símbolo}1{número_de_repetições}1
         else simbs += counter; //Se não se verificar nenhuma das condições anteriores então o número de símbolos é igual ao counter
-        counter=1; //O counter volta a ser 1 para analisar o próximo bloco
+        counter=1; //O counter volta a ser 1 para analisar o próximo valor que se encontra na posição i do buffer
 }
 return simbs; 
 }
@@ -109,7 +109,7 @@ return simbs;
 int rlecheck(unsigned char *buffer, int sizebuffer, unsigned long long total, int forcecompression){
     int ret = 0, simbs;
     float taxacomp;
-    if (total>=1024) //Se o total (tamanho total do ficheiro) for inferior a 1024 bytes então não há compressão pois o ficheiro é demasiado pequeno
+    if (total>=1024) //Se o total (tamanho total do ficheiro) for inferior a 1024 bytes então não faz a compressão rle pois o ficheiro é demasiado pequeno
     {
         simbs = simbcount (buffer, sizebuffer); //Calcula o número de símbolos no primeiro se houver compressão
         taxacomp =  (sizebuffer-simbs); //Ao tamanho do primeiro bloco do ficheiro original tiramos o valor de simbs calculado na linha anterior
@@ -128,7 +128,7 @@ return ret;
 /*A função é chamada na função split*/
 unsigned char *rle(unsigned char *buffer, int sizebuffer, int flaginit, char *filename){
     FILE *fp;
-    if (flaginit) fp = fopen (filename, "wb"); //Se estiver no primeiro bloco escreve no início do fiheiro, caso contrário escreve no final
+    if (flaginit) fp = fopen (filename, "wb"); //Se estiver no primeiro bloco escreve no início do ficheiro, caso contrário escreve no final
     else fp = fopen (filename, "ab"); 
     int i, j=0, counter = 1;
     unsigned char *rlebuffer = malloc (sizebuffer* sizeof(unsigned char)*2);
@@ -174,19 +174,19 @@ return rlebuffer;
 }
 
 /*Esta função vai calcular a taxa de compressão e o tamanho dos blocos analisados no ficheiro rle*/
-/*A funão retorna dois valores que são usados na função moduloF*/
+/*A função retorna dois valores que são usados na função moduloF*/
 struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long long n_blocks, unsigned long long total, int forcecompression){
     struct tcomp_sizerleblocks ret;
     ret.taxa_comp=0;
     int bytesRead, flaginit=1, simbs=0, flagrle=0, flagend=0, *arrayrleblocks = array_rle_blocksize_zeros(n_blocks), bloco = 0;
     float taxacomp = 0; 
     char *filenamefreq = dotfreq(filename), *filenamerle = dotrle(filename), *filenamerlefreq = dotfreq(filenamerle);
-    FILE *exsistingFile;
-    exsistingFile = fopen(filename,"rb");        
+    FILE *existingFile;
+    existingFile = fopen(filename,"rb");        
     int workSize = total; //A variável worksize toma o valor da variável total que é igual ao tamanho total do ficheiro recebido
         while (workSize) //Enquando o ficheiro não acabar ocorre o ciclo while
         {
-            int chunkSize ; //Esta variável toma o valor do tamanho do bloco que vai ser analisado
+            int chunkSize ; //Se o último bloco for menor do que 1Kbyte, entao esse bloco é analisado juntamente com o bloco anterior
             if (workSize<= block_size+1024)
             {
                 chunkSize = workSize;
@@ -196,8 +196,8 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
                 chunkSize= workSize > block_size ? block_size : workSize;
             }
             unsigned char *buffer = (unsigned char *)malloc(chunkSize);
-            bytesRead = fread( buffer, sizeof(unsigned char), chunkSize, exsistingFile );
-            workSize -= bytesRead; //Retira ao worksize o tamanho do bloco que foi lido, diminhuido o que falta analisar
+            bytesRead = fread( buffer, sizeof(unsigned char), chunkSize, existingFile );
+            workSize -= bytesRead; //Retira ao worksize o tamanho do bloco que foi lido, diminuindo o que falta analisar
             if (!workSize) flagend = 1;
             if (flaginit && rlecheck(buffer, chunkSize, total, forcecompression)){
                 rle(buffer, chunkSize, flaginit, filenamerle);
@@ -230,7 +230,7 @@ ret.taxa_comp = taxacomp;
 ret.size_rle_blocks = arrayrleblocks;
 }
 
-fclose(exsistingFile);
+fclose(existingFile);
 return ret;
 }
 
