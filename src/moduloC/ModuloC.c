@@ -38,6 +38,9 @@ int moduloC(int argc, char **argv){
 
     write_codes_in_file(shaf_file, &out_bytes);
 
+    freeCodesLists(&codes_list);
+    freeMatrixList(&out_bytes);
+
     print_final_info(start_time, shaf_file, &codes_list, &out_bytes);
     return EXIT_SUCCESS;
 }
