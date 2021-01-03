@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -std=gnu11 -Wall -Wextra -pedantic-errors -O
 #SRCS = $(wildcard src/*.c) $(wildcard src/*/*.c)
 
-SRCS = src/Main.c src/moduloD/manual.c src/moduloC/ModuloC.c src/moduloC/c_array.c src/moduloC/d_matrix.c src/moduloD/d_array.c src/moduloD/moduloD.c src/moduloD/tree.c src/moduloD/auxiliar.c src/moduloF/moduloF.c src/utils/fsize.c src/moduloT/ModuloT.c src/utils/Lista.c src/utils/Pares.c
+SRCS = src/shafa.c src/moduloD/manual.c src/moduloC/ModuloC.c src/moduloC/c_array.c src/moduloC/d_matrix.c src/moduloD/d_array.c src/moduloD/moduloD.c src/moduloD/tree.c src/moduloD/auxiliar.c src/moduloF/moduloF.c src/utils/fsize.c src/moduloT/ModuloT.c src/utils/Lista.c src/utils/Pares.c
 
 OBJS = $(SRCS:.c=.o)
 MAIN = shafa
