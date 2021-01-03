@@ -63,7 +63,6 @@ void error_messages(int n,char *str) {
     }
 }
 
-
 void output_text (size_t nr_blocks,size_t* input_array,size_t* output_array,char* output_file,char* rle_file, double time_spent,int do_rle, struct tm tm){
     printf("José Diogo,a93251, e António Fernandes, a93312, MIEI/CD, %d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
     printf("Módulo: d (descodificação dum ficheiro shaf)\n");

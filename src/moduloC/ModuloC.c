@@ -1,7 +1,5 @@
 #include "ModuloC.h"
 
-#define MAX_FILENAME 200
-
 /**
  * @[número_de_blocos]
  * @[tamanho_bloco_1]
@@ -14,50 +12,37 @@
 int moduloC(int argc, char **argv){
     clock_t start_time = clock();
     char *fileName = argv[1];
-    if(argc == 4){
-        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
-        strcat(cod_file, fileName); strcat(cod_file, ".cod");
-        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
-        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
-//        strcat(shaf_file, "shafa.out");
 
-        codes_lists_struct codes_list;
-        initCodesLists(&codes_list);
-        readCodFile(cod_file, &codes_list);
+    char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
+    strcat(cod_file, fileName); strcat(cod_file, ".cod");
+    char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
+    strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
 
-        D_Matrix_List out_bytes;
-        initMatrixList(&out_bytes);
-        binary_encoding(fileName, &codes_list, &out_bytes);
+    codes_lists_struct codes_list;
+    initCodesLists(&codes_list);
+    int cod_res = readCodFile(cod_file, &codes_list);
+    if(cod_res != 0) return EXIT_FAILURE;
 
-        write_codes_in_file(shaf_file, &out_bytes);
+    D_Matrix_List out_bytes;
+    initMatrixList(&out_bytes);
+    int bin_res = binary_encoding(fileName, &codes_list, &out_bytes);
+    if(bin_res != 0) return EXIT_FAILURE;
 
-        print_final_info(start_time, shaf_file, &codes_list, &out_bytes);
+    write_codes_in_file(shaf_file, &out_bytes);
 
-    }else if(argc == 5 && !strcmp("-r", argv[4])){ // TODO change to -c r
-        strcat(fileName, ".rle");
-        char *cod_file = malloc(sizeof(char)*MAX_FILENAME);
-        strcat(cod_file, fileName); strcat(cod_file, ".cod");
-        char *shaf_file = malloc(sizeof(char)*MAX_FILENAME);
-        strcat(shaf_file, fileName); strcat(shaf_file, ".shaf");
-
-        codes_lists_struct codes_list;
-        initCodesLists(&codes_list);
-        readCodFile(cod_file, &codes_list);
-
-        D_Matrix_List out_bytes;
-        initMatrixList(&out_bytes);
-        binary_encoding(fileName, &codes_list, &out_bytes);
-
-        write_codes_in_file(shaf_file, &out_bytes);
-    }else{
-        return EXIT_FAILURE;
-    }
+    print_final_info(start_time, shaf_file, &codes_list, &out_bytes);
     return EXIT_SUCCESS;
 }
 
-void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
+int binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes) {
     FILE *in;
     in = fopen(in_file, "rb");
+
+    if(in == NULL){
+        printf(COR_B_VERMELHO"ERROR:"COR_RESET" Can't find %s file\n", in_file);
+        return 1;
+    }
+
     fseek(in, 0L, SEEK_SET);
 
     for (int i = 0; i < codes_lists->len; i++) {
@@ -93,6 +78,7 @@ void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_Li
         insertMatrixInList(out_bytes, coded_bytes);
     }
     fclose(in);
+    return 0;
 }
 
 unsigned char byte_to_char(D_Array *arr){
@@ -124,9 +110,14 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes){
     fclose(out);
 }
 
-void readCodFile(char *filename, codes_lists_struct *codes_lists){
+int readCodFile(char *filename, codes_lists_struct *codes_lists){
     FILE *in;
     in = fopen(filename, "rb");
+
+    if(in == NULL){
+        printf(COR_B_VERMELHO"ERROR:"COR_RESET" Can't find %s file\n", filename);
+        return 1;
+    }
 
     char normal_rle;
     fseek(in, 1, SEEK_SET);
@@ -200,6 +191,7 @@ void readCodFile(char *filename, codes_lists_struct *codes_lists){
         insertCodesLists(codes_lists, block_codes);
         freeArray(&crt_code);
     }
+    return 0;
 //    printCodesLists(codes_lists);
 }
 
@@ -249,7 +241,7 @@ void print_final_info(clock_t start_time, char *shaf_file, codes_lists_struct *c
     printf("Ficheiro gerado: %s\n", shaf_file);
 }
 
-//int main_example(){
+//int main(){
 //    codes_lists_struct codes_list;
 //    initCodesLists(&codes_list);
 //    readCodFile("../resources/aaa.txt.cod", &codes_list);

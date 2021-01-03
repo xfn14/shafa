@@ -1,5 +1,3 @@
-
-
 #ifndef _MANUAL_
 #define _MANUAL_
 
@@ -32,5 +30,3 @@
 void help_menu ();
 
 #endif
-
-

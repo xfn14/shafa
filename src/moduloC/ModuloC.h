@@ -6,9 +6,12 @@
 #include "../moduloD/d_array.h"
 #include "c_array.h"
 #include "d_matrix.h"
+#include "../moduloD/manual.h"
 
 #ifndef _MODULO_C_H_
 #define _MODULO_C_H_
+
+#define MAX_FILENAME 200
 
 /**
  * @brief Codificação de um ficheiro de símbolos
@@ -25,7 +28,7 @@ int moduloC(int argc, char **argv);
  * @param[in] codes_lists
  * @param[in,out] out_bytes
  */
-void binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes);
+int binary_encoding(char *in_file, codes_lists_struct *codes_lists, D_Matrix_List *out_bytes);
 
 /**
  * @brief Writes the coded bytes on the .shaf file
@@ -41,7 +44,7 @@ void write_codes_in_file(char *out_file, D_Matrix_List *coded_bytes);
  * @param[in] filename
  * @param[in,out] codes_lists
  */
-void readCodFile(char *filename, codes_lists_struct *codes_lists);
+int readCodFile(char *filename, codes_lists_struct *codes_lists);
 
 /**
  * @brief Reads a number in a file until the next '@'
