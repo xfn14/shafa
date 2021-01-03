@@ -186,7 +186,7 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
     int workSize = total; //A variável worksize toma o valor da variável total que é igual ao tamanho total do ficheiro recebido
         while (workSize) //Enquando o ficheiro não acabar ocorre o ciclo while
         {
-            int chunkSize ; //Esta variável toma o valor do tamanho do bloco que vai ser analizado
+            int chunkSize ; //Esta variável toma o valor do tamanho do bloco que vai ser analisado
             if (workSize<= block_size+1024)
             {
                 chunkSize = workSize;
@@ -197,7 +197,7 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
             }
             unsigned char *buffer = (unsigned char *)malloc(chunkSize);
             bytesRead = fread( buffer, sizeof(unsigned char), chunkSize, exsistingFile );
-            workSize -= bytesRead; //Retira ao worksize o tamanho do bloco que foi lido, diminhuido o que falta analizar
+            workSize -= bytesRead; //Retira ao worksize o tamanho do bloco que foi lido, diminhuido o que falta analisar
             if (!workSize) flagend = 1;
             if (flaginit && rlecheck(buffer, chunkSize, total, forcecompression)){
                 rle(buffer, chunkSize, flaginit, filenamerle);
@@ -222,7 +222,7 @@ struct tcomp_sizerleblocks split (char *filename, unsigned long block_size, long
             free(buffer);
             bloco++;
         }
-if (flagrle){ //Se se gerou ficheiro rle vai calcular a taxa de compressão e vai guardar em ret o array que contém os tamanhos dos blocos analizados nos ficheiros rle, caso contrário não faz nada e a taxa de compressão continua 0
+if (flagrle){ //Se se gerou ficheiro rle vai calcular a taxa de compressão e vai guardar em ret o array que contém os tamanhos dos blocos analisados nos ficheiros rle, caso contrário não faz nada e a taxa de compressão continua 0
 taxacomp =  total;
 taxacomp -= simbs;
 taxacomp /= total;
