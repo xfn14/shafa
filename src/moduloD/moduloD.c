@@ -31,6 +31,7 @@ int rle_decompression(char *filename, char *new_file, size_t *input_array, size_
         output_array[block++] = new_buffer.used;                                   //keeping track of the size of the new block
         fwrite(new_buffer.array, 1, new_buffer.used * sizeof(unsigned char), fp);  //write the block in file
         clearArray(&new_buffer);
+        free(temp_buffer);
     }
     output_array[block] = new_buffer.used;  //keeping track of the size of the new block
     freeArray(&new_buffer);
@@ -50,7 +51,11 @@ Abin do_tree(unsigned char *buffer, int *index, int file_size, size_t *block_siz
         if (buffer[i] == '@') {  //end of block case
             if (arr.used != 0)
                 insert_Tree(&tree, &arr, element);  //insert every code in tree
-            if (buffer[i + 1] == '0') return tree;  //last block case
+            if (buffer[i + 1] == '0') 
+            {
+                freeArray(&arr);
+                return tree;  //last block case
+            }
             *index = i + 1;
             block_size[block_index] = do_size(buffer, index);  //keep track of block's size
             flag = 0;
@@ -103,6 +108,7 @@ int shaf_decompression(char *read_file, char *output_file, size_t *output_size, 
     if (fread(check_buffer, sizeof(unsigned char), 20, ptr) == 0) return 0;
     size_t nr_blocks = do_size(check_buffer, &index), block_i = 0; //number of blocks
     input_size[0] = do_size(check_buffer, &index);  //size of the first block
+    free(check_buffer);
     block_i = index;
     fseek(ptr, index, SEEK_SET);
     for (size_t n = 0; n < nr_blocks; n++) {
@@ -137,11 +143,14 @@ int shaf_decompression(char *read_file, char *output_file, size_t *output_size, 
             input_size[n + 1] = do_size(buffer_size, &index);
             fseek(ptr, -10 + index, SEEK_CUR);//Set the file pointer to beggining of next block
             flag = 1;
+            free(buffer_size);
         }
         clearArray(&new_buffer);
         clearArray(&array);
         free(temp_buffer);
     }
+    freeArray(&array);
+    freeArray(&new_buffer);
     fclose(ptr);
     fclose(fp);
     return 1;
@@ -169,6 +178,7 @@ int get_size(char *filename, size_t *nr_blocks, size_t *block_size) {
         if (buffer[index] == ';') element++;
     }
     fclose(fp);
+    free(buffer);
     return 1;
 }
 
@@ -189,8 +199,8 @@ size_t get_nr_blocks(int argc, char **argv) {
     FILE *fp;
     char *filename = argv[1];
     int len = strlen(filename);
-    char freq_file[len];
-    unsigned char buffer[20];
+    char freq_file[len], result;
+    unsigned char *buffer = malloc (sizeof(unsigned char) * 20);
     if (argc == 5 && argv[4][0] == 'r') {
         int point = last_point(filename, len);
         memset(freq_file, 0, point + 1);
@@ -203,7 +213,7 @@ size_t get_nr_blocks(int argc, char **argv) {
         }
         if (fread(buffer, 20, sizeof(unsigned char), fp) == 0) return 0;
         int index = 3;
-        return do_size(buffer, &index);
+        result = do_size(buffer, &index);
     } else {
         fp = fopen(filename, "rb");
         if (fp == NULL) {
@@ -212,10 +222,11 @@ size_t get_nr_blocks(int argc, char **argv) {
         }
         if (fread(buffer, 20, sizeof(unsigned char), fp) == 0) return 0;
         int index = 1;
-        return do_size(buffer, &index);
+        result = do_size(buffer, &index);
     }
+    free(buffer);
     fclose(fp);
-    return 1;
+    return result;
 }
 
 int moduloD(int argc, char **argv) {
@@ -241,9 +252,12 @@ int moduloD(int argc, char **argv) {
                 }
                 success = do_only_rle(filename, output_file, input_array, output_array, &block_number);
                 for (size_t i = 0; i < block_number; i++) freeAB(array_tree[i]);
+                free(array_tree);
                 clock_t end = clock();
                 double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
                 if (success) output_text(block_number, input_array, output_array, output_file, rle_file, time_spent, do_rle, tm);
+                free(output_array);
+                free(input_array);
                 return 1;
             }
             if (argv[4][0] == 's') only_shaf = 1;
@@ -263,14 +277,23 @@ int moduloD(int argc, char **argv) {
             rle_decompression(rle_file, output_file, output_array, input_array, block_number);
             output_array = input_array;
             input_array = before;
+            free(before);
         }
         for (size_t i = 0; i < block_number; i++) freeAB(array_tree[i]);
+        free(array_tree);
         clock_t end = clock();
         double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
         if (success) output_text(block_number, input_array, output_array, output_file, rle_file, time_spent, do_rle, tm);
+        free(output_array);
+        free(input_array);
         return 0;
     } else {
         error_messages(1, "");
         return 1;
     }
+}
+
+
+int main (int argc,char **argv){
+    moduloD(argc,argv);
 }
